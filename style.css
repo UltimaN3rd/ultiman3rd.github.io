@@ -1,0 +1,32 @@
+a{
+  color:white;
+  text-decoration:none;
+}
+
+table{
+  color:white;
+  /*background-color:666666;*/
+  max-width: 75%;
+}
+
+body{
+  background-color:000000;
+  font-family:OpenDyslexic,"Arial Black",serif;
+  color:white;
+}
+
+h1,h4{
+  display:inline;
+}
+
+h1{
+  font-size:60px;
+}
+
+h3{
+  font-size:40px;
+}
+
+h4{
+  font-size:32px;
+}
