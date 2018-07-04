@@ -17,7 +17,7 @@ body{
   color:white;
 }
 
-img{
+img.thumb{
   float:right;
   margin-right:10px;
 }
