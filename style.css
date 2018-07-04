@@ -1,12 +1,14 @@
 a{
-  color:white;
+  color:rgb(64,255,64);
   text-decoration:none;
 }
 
 table{
   color:white;
   /*background-color:666666;*/
-  max-width: 75%;
+  /*max-width: 75%;*/
+  padding-right:15%;
+  float:left;
 }
 
 body{
@@ -15,8 +17,18 @@ body{
   color:white;
 }
 
+img{
+  float:right;
+  margin-right:10px;
+}
+
+p{
+  margin-top:-30px;
+}
+
 h1,h4{
   display:inline;
+  line-height:1;
 }
 
 h1{
