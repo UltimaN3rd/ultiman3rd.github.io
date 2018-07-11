@@ -1,3 +1,8 @@
+@font-face{
+  font-family: "OpenDyslexic";
+  src: url("OpenDyslexic_Bold.ttf");
+}
+
 a{
   color:rgb(64,255,64);
   text-decoration:none;
@@ -8,7 +13,14 @@ table{
   /*background-color:666666;*/
   /*max-width: 75%;*/
   padding-right:15%;
+  padding-left:15%;
   float:left;
+}
+td{
+  vertical-align: top;
+}
+td.underlined{
+  border-bottom:1px solid grey;
 }
 
 body{
@@ -18,7 +30,7 @@ body{
 }
 
 img.thumb{
-  float:right;
+  /*float:right;*/
   margin-right:10px;
 }
 
