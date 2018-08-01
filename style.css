@@ -23,10 +23,16 @@ td.underlined{
   border-bottom:1px solid grey;
 }
 
+header{
+  background-color:493c2b;
+}
+
 body{
   background-color:000000;
   font-family:OpenDyslexic,"Arial Black",serif;
   color:white;
+  margin:0;
+  padding:0;
 }
 
 img.thumb{
