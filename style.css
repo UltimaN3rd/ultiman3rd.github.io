@@ -20,15 +20,37 @@ td{
   vertical-align: top;
 }
 td.underlined{
-  border-bottom:1px solid grey;
+  border-bottom:3px solid black;
+}
+
+@media screen and (max-width: 1882px) {table{padding-left: 14%;padding-right: 14%;}}
+@media screen and (max-width: 1843px) {table{padding-left: 13%;padding-right: 13%;}}
+@media screen and (max-width: 1805px) {table{padding-left: 12%;padding-right: 12%;}}
+@media screen and (max-width: 1766px) {table{padding-left: 11%;padding-right: 11%;}}
+@media screen and (max-width: 1728px) {table{padding-left: 10%;padding-right: 10%;}}
+@media screen and (max-width: 1690px) {table{padding-left: 9%;padding-right: 9%;}}
+@media screen and (max-width: 1651px) {table{padding-left: 8%;padding-right: 8%;}}
+@media screen and (max-width: 1613px) {table{padding-left: 7%;padding-right: 7%;}}
+@media screen and (max-width: 1574px) {table{padding-left: 6%;padding-right: 6%;}}
+@media screen and (max-width: 1536px) {table{padding-left: 5%;padding-right: 5%;}}
+@media screen and (max-width: 1498px) {table{padding-left: 4%;padding-right: 4%;}}
+@media screen and (max-width: 1459px) {table{padding-left: 3%;padding-right: 3%;}}
+@media screen and (max-width: 1421px) {table{padding-left: 2%;padding-right: 2%;}}
+@media screen and (max-width: 1382px) {table{padding-left: 1%;padding-right: 1%;}}
+@media screen and (max-width: 1344px) {table{padding-left: 0%;padding-right: 0%;}}
+
+@media screen and (max-width: 900px) {
+    table tr td {
+        display: block;
+    }
 }
 
 header{
-  background-color:493c2b;
+  /*background-color:83769c;*/
 }
 
 body{
-  background-color:000000;
+  background-color:83769c;
   font-family:OpenDyslexic,"Arial Black",serif;
   color:white;
   margin:0;
@@ -42,6 +64,7 @@ img.thumb{
 
 p{
   margin-top:-30px;
+  font-size:24px;
 }
 
 h1,h4{
