@@ -8,58 +8,12 @@ a{
   text-decoration:none;
 }
 
-table{
-  color:white;
-  /*background-color:666666;*/
-  /*max-width: 75%;*/
-  padding-right:15%;
-  padding-left:15%;
-  float:left;
-}
-td{
-  vertical-align: top;
-}
-td.underlined{
-  border-bottom:3px solid black;
-}
-
-@media screen and (max-width: 1882px) {table{padding-left: 14%;padding-right: 14%;}}
-@media screen and (max-width: 1843px) {table{padding-left: 13%;padding-right: 13%;}}
-@media screen and (max-width: 1805px) {table{padding-left: 12%;padding-right: 12%;}}
-@media screen and (max-width: 1766px) {table{padding-left: 11%;padding-right: 11%;}}
-@media screen and (max-width: 1728px) {table{padding-left: 10%;padding-right: 10%;}}
-@media screen and (max-width: 1690px) {table{padding-left: 9%;padding-right: 9%;}}
-@media screen and (max-width: 1651px) {table{padding-left: 8%;padding-right: 8%;}}
-@media screen and (max-width: 1613px) {table{padding-left: 7%;padding-right: 7%;}}
-@media screen and (max-width: 1574px) {table{padding-left: 6%;padding-right: 6%;}}
-@media screen and (max-width: 1536px) {table{padding-left: 5%;padding-right: 5%;}}
-@media screen and (max-width: 1498px) {table{padding-left: 4%;padding-right: 4%;}}
-@media screen and (max-width: 1459px) {table{padding-left: 3%;padding-right: 3%;}}
-@media screen and (max-width: 1421px) {table{padding-left: 2%;padding-right: 2%;}}
-@media screen and (max-width: 1382px) {table{padding-left: 1%;padding-right: 1%;}}
-@media screen and (max-width: 1344px) {table{padding-left: 0%;padding-right: 0%;}}
-
-@media screen and (max-width: 900px) {
-    table tr td {
-        display: block;
-    }
-}
-
-header{
-  /*background-color:83769c;*/
-}
-
 body{
-  background-color:83769c;
+  background-color:403a4d;
   font-family:OpenDyslexic,"Arial Black",serif;
   color:white;
   margin:0;
   padding:0;
-}
-
-img.thumb{
-  /*float:right;*/
-  margin-right:10px;
 }
 
 p{
@@ -82,4 +36,31 @@ h3{
 
 h4{
   font-size:32px;
+}
+
+.game {
+  overflow:hidden;
+  border-bottom:2px solid #000;
+}
+
+.game div {
+   min-height: 384px;
+   padding: 10px;
+}
+#thumbnail {
+  float:left;
+  width:384px;
+}
+#description {
+  overflow:hidden;
+  min-height:384px;
+}
+
+@media screen and (max-width: 1024px) {
+   #thumbnail {
+    float: none;
+    margin-right:0;
+    width:auto;
+    border:0;
+  }
 }
