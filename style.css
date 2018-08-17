@@ -14,6 +14,7 @@ body{
   color:white;
   margin:0;
   padding:0;
+  padding-bottom:100px;
 }
 
 p{
@@ -38,29 +39,53 @@ h4{
   font-size:32px;
 }
 
-.game {
-  overflow:hidden;
-  border-bottom:2px solid #000;
+.footer{
+  position:fixed;
+  width:100%;
+  background-color:rgba(0,0,0,0.5);
+  bottom:0px;
 }
 
-.game div {
-   min-height: 384px;
-   padding: 10px;
+.grid{
+  margin: 0 auto;
+}
+
+.grid-sizer,.grid-item {
+  width:98vw;
+  margin-bottom:10px;
+}
+
+.grid-item{
+  width:auto;
+  float: left;
+  border:2px solid #000;
+  background:rgba(255,255,255,0.2);
 }
 #thumbnail {
   float:left;
   width:384px;
+  padding:10px;
+  overflow:hidden;
 }
 #description {
   overflow:hidden;
-  min-height:384px;
+  padding-bottom:10px;
+}
+
+@media screen and (min-width: 1800px) {
+  .grid-sizer,.grid-item{
+    width:850px;
+  }
+   #thumbnail {
+    float: none;
+  }
 }
 
 @media screen and (max-width: 1024px) {
+  .grid-sizer,.grid-item {
+    width:95vw;
+  }
    #thumbnail {
     float: none;
-    margin-right:0;
-    width:auto;
-    border:0;
   }
 }
