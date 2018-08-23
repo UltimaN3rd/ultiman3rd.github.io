@@ -70,6 +70,8 @@ h4{
 #description {
   overflow:hidden;
   padding-bottom:10px;
+  padding-left:10px;
+  padding-right:10px;
 }
 
 @media screen and (min-width: 1800px) {
