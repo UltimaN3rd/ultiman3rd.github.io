@@ -1,7 +1,7 @@
-@font-face{
+/*@font-face{
   font-family: "OpenDyslexic";
   src: url("OpenDyslexic_Bold.ttf");
-}
+}*/
 
 a{
   color:rgb(64,255,64);
@@ -10,7 +10,7 @@ a{
 
 body{
   background-color:403a4d;
-  font-family:OpenDyslexic,"Arial Black",serif;
+  font-weight: bold;
   color:white;
   margin:0;
   padding:0;
@@ -36,6 +36,9 @@ h3{
 
 h4{
   font-size:32px;
+}
+h5{
+  font-size:24px;
 }
 
 .footer{

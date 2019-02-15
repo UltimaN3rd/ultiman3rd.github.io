@@ -1,0 +1,97 @@
+/* disabling default style stuff */
+p{
+  margin-top:0px;
+}
+h1,h4{
+  display:inline;
+  line-height:1;
+}
+
+/* blog specific stuff */
+
+body{
+ max-width:100%;
+ overflow-x:hidden;
+}
+
+#blogmain{
+ display: table;
+ width: 100%;
+}
+
+#sidebar{
+ background: rgba(255,255,255,0.8);
+ color: black;
+ min-width: 400px;
+ display: table-cell;
+ padding-top: 50px;
+ padding-bottom: 50px;
+}
+.showhide {
+ font-size:32px;
+ padding-right: 32px;
+ padding-left: 32px;
+}
+:target {
+ background: rgba(128,255,128,1);
+}
+.showing:before {
+ content:"- ";
+}
+.hiding:before {
+ content:"+";
+}
+.showhidesub {
+ font-size:24px;
+ padding-left: 48px;
+}
+.blogpostlink{
+ cursor: pointer;
+ padding-right: 32px;
+ padding-left: 40px;
+}
+.blogpostlink:before {
+ content:" • ";
+}
+.blogpostlinksub{
+ padding-left: 56px;
+}
+
+#blogcontent{
+ background: rgba(255,255,255,0.2);
+ display: table-cell;
+ width: 100%;
+ padding-left:50px;
+ padding-right:50px;
+ white-space:pre-wrap;
+}
+code{
+ background:rgba(64,64,96,1);
+ padding-left:50px;
+ padding-right:50px;
+ display:inline-block;
+ white-space:pre;
+}
+#blogcontent>img{
+ max-width:100%;
+ height:auto;
+ object-fit:contain;
+}
+#blogiframe{
+ border:none;
+ scrolling:no;
+ padding-left: 50px;
+}
+
+
+@media screen and (max-width: 1024px) {
+ #sidebar,#blogcontent{
+  display:table-row;
+  min-height:0;
+ }
+}
+@media screen and (min-width: 1025px) {
+ #sidebar,#blogcontent{
+  display:table-col;
+ }
+}
