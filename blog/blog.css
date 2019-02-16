@@ -1,0 +1,11 @@
+td {
+  background: rgba(0,0,0,0.1);
+  padding: 10px;
+  vertical-align: top;
+}
+
+table {
+  border-spacing: 20px;
+  width: 100%;
+  table-layout: fixed;
+}

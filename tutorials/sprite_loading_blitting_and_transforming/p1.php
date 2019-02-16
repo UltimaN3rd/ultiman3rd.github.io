@@ -1,15 +1,32 @@
-<?php include "../bloghead.html" ?>
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
 <h4>Sprite loading, blitting and transforming
 Page 1 - Loading and basic blitting</h4>
 
 Prerequisites:
 - A basic knowledge of C
-- A C program with a window and pixel buffer. You can follow my <a href="blog.php#tutorial/opening_a_window_with_xlib" target="_blank">Xlib</a> or <a href="blog.php#tutorial/opening_a_window_with_sdl" target="_blank">SDL</a> tutorials for this.
+- A C program with a window and pixel buffer. You can follow my <a href="/tutorials/opening_a_window_with_xlib/" target="_blank">Xlib</a> or <a href="tutorials/opening_a_window_with_sdl/" target="_blank">SDL</a> tutorials for this.
 - <a href="https://github.com/nothings/stb/blob/master/stb_image.h" target="_blank">stb_image.h</a>
 
 Alright, first I'll show you what you'll end up with at the end of this tutorial:
 
-<img src="tutorial/data_sprite_loading_blitting_and_transforming/end_result.gif">
+<img src="end_result.gif"/>
 
 To summarize: We load a sprite with transparency, blit it to the pixel buffer, and blit using rotation, scale and rotation+scale, all with origin points. The PNG loading is done with the stb_image library for this tutorial. In the future I'd like to cover decompressing PNGs manually but for now Sean T Barrett comes to the rescue!
 
@@ -52,7 +69,7 @@ int main(int argc, char* argv[]){
 
 If you want to go into detail on how that stuff works, or the few other KW* functions and variables you'll see later you can take a look at the <a href="https://gitlab.com/UltimaN3rd/croaking-kero-c-libraries/blob/master/include/kero_window.h" target="_blank">kero_window.h</a> source file and/or follow my "opening a window" tutorials.
 
-First thing, let's load a sprite. I'm using this croaking kero sprite: <img src="tutorial/data_sprite_loading_blitting_and_transforming/croakingkero.png">
+First thing, let's load a sprite. I'm using this croaking kero sprite: <img src="croakingkero.png"/>
 
 <code><xmp>// Top of file
 #define STB_IMAGE_IMPLEMENTATION
@@ -82,7 +99,7 @@ Starting in main before the main loop, we create uninitialized variables for a p
 
 Then we iterate through the image pixel by pixel, copying them to the frame buffer. We travel row-by-row instead of column-by-column because that's how the data is laid out in memory. So we index each pixel by casting to a uint32_t*, adding sourcey times the width (move down sourcey rows) plus sourcex (move across sourcex pixels within that row). We index the same pixel in the source image, and dereference both to set the frame buffer pixel to the value of the sprite pixel.
 
-<img src="tutorial/data_sprite_loading_blitting_and_transforming/pixel_indexing.png">
+<img src="pixel_indexing.png"/>
 
 I've done it pixel-by-pixel here because we're going to need to do it that way for every other kind of blit, but there is an alternative for a non-transformed blit and that's row-by-row. Just remove the X for loop and instead, for every row use:
 <code><xmp>memcpy((uint32_t*)(kw_framebuffer.pixels) + sourcey*kw_framebuffer.w, (uint32_t*)(kero_pixels) + sourcey*kero_width, kero_width*4);</xmp></code>
@@ -238,9 +255,9 @@ We could prevent the sprite from going out of bounds by simply restricting our x
 
 So for the left we want to clip an amount of the image equal to the amount our x value is left of 0, or clip nothing if it's right of 0. The top clip is the same but with y. To clip the right we take the difference between the right-most point we want to draw (x + source->w) and the destination's width and clip that amount. Same for the bottom in the y axis. Then we actually clip those amounts by reading pixels from our sprite starting at the left/top clips and ending at width/height minus right/bottom clips.
 
-<img src="tutorial/data_sprite_loading_blitting_and_transforming/lclip.png"> <img src="tutorial/data_sprite_loading_blitting_and_transforming/rclip.png">
+<img src="lclip.png"/> <img src="rclip.png"/>
 
-Let's solve the transparency issue now. If you were always going to have pixels that were either fully transparent or fully opaque you could check the transparency and skip the pixel. You could even have 24-bit pixels and use some specific colour (like magenta) to represent transparent pixels. However I want to be able to have semi-transparent pixels so that I can create "beautiful" effects like this horrendous blue glow: <img src="tutorial/data_sprite_loading_blitting_and_transforming/croakingkeroglow.png">
+Let's solve the transparency issue now. If you were always going to have pixels that were either fully transparent or fully opaque you could check the transparency and skip the pixel. You could even have 24-bit pixels and use some specific colour (like magenta) to represent transparent pixels. However I want to be able to have semi-transparent pixels so that I can create "beautiful" effects like this horrendous blue glow: <img src="croakingkeroglow.png"/>
 
 That means we'll have to blend each pixel with the target pixel depending on the source's transparency:
 
@@ -258,7 +275,7 @@ So we index the first component of the source and destination pixels, which is t
 
 If you think about it in real-world terms, starting with the light coming from the object at the back of the screen, that light passes through a transparent object. If that object is 50% transparent, 50% of the light is lost. If you now place another transparent object in the path of that light, say a 25% transparent object, then the light will lose 25% of what remains. Therefore all we have to do is take the transparency (255 - opacity) of the destination pixel, multiply that by the source pixel's alpha and add it to the original opacity.
 
-<img src="tutorial/data_sprite_loading_blitting_and_transforming/light.png">
+<img src="light.png"/>
 
 So you could say by stacking a 50% opaque object with a 25% opaque object, you end up with a combined 62.5% opacity.
 
@@ -321,7 +338,16 @@ void SpriteBlit(Sprite* source, Sprite* dest, int x, int y, int originx, int ori
 
 That's about it for simple blitting. With this you could make a full game - particularly games in the NES days usually didn't transform sprites so there's a whole lot of possibility with just this simple technique.
 
-This tutorial continues on page 2 with scaling! I'd link it here but I'm a C programmer, not web, so you'll have to click the link in the side/top-bar.
+<a href="p2.php">This tutorial continues on page 2 with scaling!</a>
 
 Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

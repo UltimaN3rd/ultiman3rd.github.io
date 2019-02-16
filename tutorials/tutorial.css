@@ -1,0 +1,17 @@
+code{
+ background:rgba(64,64,96,1);
+ padding-left:50px;
+ padding-right:50px;
+ display:inline-block;
+}
+code:after{
+ content:"\a\a";
+}
+code:before{
+ content:"\a";
+}
+
+article {
+  white-space: pre-wrap;
+  padding: 50px;
+}

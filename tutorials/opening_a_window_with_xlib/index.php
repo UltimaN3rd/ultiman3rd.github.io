@@ -1,11 +1,28 @@
-<?php include "../bloghead.html" ?>
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
 <h4>Opening a Window With Xlib</h4>
 
 Note: To follow this tutorial you should have a basic understanding of C.
 
 Alright, let's open a window on Linux in C! First let me show you what you'll end up with at the end of this tutorial:
 
-<img src="tutorial/data_opening_a_window_with_xlib/end_result.gif">
+<img src="end_result.gif">
 
 If you're on mobile that might look like a plain black window. Rest assured there is one white pixel moving around near the middle! And don't worry about how choppy that looks - that's just due to the way I recorded the gif.
 
@@ -168,7 +185,7 @@ I included stdint just so I can use uint8_t and other such types. If you'd rathe
 
 Now we allocate memory for our pixels. The 1280*720 is obvious, right? That's the size of the window. But why am I multiplying by 4? Well, each pixel is represented by at least 3 bytes - Blue, Green and Red. That 4th byte in this case is just a buffer to keep the pixels aligned on 32-bit memory addresses but in the case of sprites that last byte will represent the Alpha (transparency) channel.
 
-<img src="tutorial/data_opening_a_window_with_xlib/rgb_bytes.png">
+<img src="rgb_bytes.png">
 
 We create our window_image with pretty standard settings and pass it our pixel array. You can check the documentation for all the arguments but they will pretty much always look like this.
 
@@ -176,7 +193,7 @@ We get the default graphics context, then in our main loop we set a single pixel
 
 We cast our canvas to a uint32_t pointer, which is the size of one pixel (4 bytes). To get to our desired pixel from there we just add Y times the Width plus X. Our pixels are stored as horizontal rows so by adding Y times Width that moves us down a number of pixel rows, then adding X gets us across to the correct pixel. Try changing the X and Y coordinates of the pixel to get a better understanding of the math.
 
-<img src="tutorial/data_opening_a_window_with_xlib/pixel_indexing.png">
+<img src="pixel_indexing.png">
 
 Then we dereference that pixel and assign it a value. I wrote the pixel value in hexadecimal for clarity. In hex each byte is visible as a pair of digits, like so: 0xAARRGGBB. Go ahead and mess with that value, try making the pixel green, blue, red and combinations of those colours. Also notice that the AA byte has no apparent effect. In the window canvas those bytes are not used for rendering, but in other pixel arrays they are usually used for alpha (transparency).
 
@@ -369,4 +386,13 @@ Cheers.
 
 
 Thanks to Froggie717 and Reddit user <a href="https://www.reddit.com/r/programming/comments/a6fh8y/looking_for_criticism_on_my_tutorial_opening_a/ebuqibi" target="_blank">Enselic</a> for criticisms and correcting errors in this tutorial.
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

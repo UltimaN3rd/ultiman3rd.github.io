@@ -1,7 +1,22 @@
-<?php include "../bloghead.html" ?>
-<h4>Sprite loading, blitting and transforming</h4>
+<!DOCTYPE html>
+<html lang="en-US">
 
-<code><xmp></xmp></code>
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
+<h4>Sprite loading, blitting and transforming</h4>
 
 Right, let's spin these sprites around!
 
@@ -58,4 +73,13 @@ void SpriteBlitRotated(Sprite* sprite, Sprite* target, float x, float y, float a
 
 
 Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

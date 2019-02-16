@@ -1,5 +1,22 @@
-<?php include "../bloghead.html" ?>
-<img src="../images/articles/pico8_binary_save_system.gif">
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/articles/article.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
+<img src="pico8_binary_save_system.gif"/>
 Pico-8 has a simple save system which allows you to set a cartridge ID:
 
 <code><xmp>cartdata("mycoolgame")</xmp></code>
@@ -144,9 +161,18 @@ In load_string we start with an empty string then copy each character from the b
 
 That’s all, folks! I really hope this is helpful to the Pico-8 community. I have previously searched for a Pico-8 binary save system and found something on the BBS but it was esoteric. Instead I muddled my way until I finally understood binary and how to use it in Pico-8. Here’s a cart with all the code, along with some bonus code for the naming screen I made for Notemon and the code to generate that matrix background you see in the cart image 🙂
 
-<img src="../images/articles/binarysave.p8.png"> 
+<img src="binarysave.p8.png"> 
 
 Thanks for reading my post. Expect more Pico-8 tech posts as I continue creating Notemon!
 
 Also available on the Pico-8 BBS: <a href="https://www.lexaloffle.com/bbs/?tid=30711" target="_blank">https://www.lexaloffle.com/bbs/?tid=30711</a>
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

@@ -1,0 +1,58 @@
+header, section, footer, aside, nav, main, article, figure {
+  display: block;
+}
+
+a {
+  color: rgb(64,255,64);
+  text-decoration: none;
+}
+
+h1, h4 {
+  display: inline;
+  line-height: 1;
+}
+h1 {  font-size: 60px; }
+h3 {
+  font-size: 40px;
+  padding: 0;
+  margin: 0px;
+}
+h4 { font-size: 32px; }
+h5 { font-size: 24px; }
+
+header {
+  margin: auto;
+}
+
+body {
+  background: #403a4d;
+  color: white;
+  margin: 0;
+  padding: 0;
+  min-width: 960px;
+}
+
+article {
+  text-align: left;
+}
+article#game {
+  background: rgba(0,0,0,0.25);
+  display: inline-block;
+  overflow: hidden;
+  height: 384px;
+  text-align: left;
+  text-padding: 0;
+  padding: 0;
+  margin: 5px;
+  width: 90%;
+}
+
+img {
+  display: inline-block;
+}
+#thumbnail {
+  float:left;
+  padding-right: 10px;
+  width: 384px;
+  height: 384px;
+}

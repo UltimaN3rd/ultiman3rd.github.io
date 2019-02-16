@@ -1,4 +1,21 @@
-<?php include "../bloghead.html" ?>
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
 <h4>Sprite loading, blitting and transforming
 Page 2 - Scaling</h4>
 
@@ -35,7 +52,7 @@ Previously we were setting dy = 0 and looping while dy &lt; scaley. If scaley we
 
 When you scale by negatives in each axis you'll notice that we get lines of empty pixels in the corresponding dimensions. Let's take a look at how the loops work when dealing with positive fractions and negative fractions.
 
-<img src="tutorial/sprite_loading_blitting_and_transforming/scaling_loop_series.png">
+<img src="scaling_loop_series.png"/>
 
 So when our scale is negative we need to somehow give ourselves an extra pixel. Here's an easy way to do it:
 
@@ -61,9 +78,16 @@ So we adjust the destination of each block of scaled pixels by the origin positi
 
 Now we've got a complete scaled blit function! At this point I highly recommend you do something like add some scale/origin variables that you can modify with key presses so that you can fully explore the range of sprite transformation you can achieve with the scaled blit.
 
-This tutorial continues on page 3 with rotation! I'd link it here but I'm a C programmer, not web, so you'll have to click the link in the side/top-bar.
-
-
+<a href="p3.php">This tutorial continues on page 3 with rotation!</a>
 
 Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

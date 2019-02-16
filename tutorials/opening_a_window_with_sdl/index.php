@@ -1,4 +1,21 @@
-<?php include "../bloghead.html" ?>
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
 <h4>Opening a Window With SDL</h4>
 
 Note: To follow this tutorial you should have a basic understanding of C.
@@ -6,7 +23,7 @@ Note: This is a cross-platform adaptation of my Linux/Xlib tutorial, so Windows/
 
 Alright, let's open a window on Windows, Mac or Linux in C with SDL! First let me show you what you'll end up with at the end of this tutorial:
 
-<img src="tutorial/data_opening_a_window_with_sdl/end_result.gif">
+<img src="end_result.gif">
 
 If you're on mobile that might look like a plain black window. Rest assured there is one white pixel moving around near the middle! And don't worry about how choppy that looks - that's just due to the way I recorded it and converted it to a gif.
 
@@ -111,11 +128,11 @@ In our main loop we set a single pixel to 0xffffffff before updating the window 
 
 We cast our canvas to a uint32_t pointer, which is the size of one pixel (4 bytes). Each pixel is represented by at least 3 bytes - Blue, Green and Red. That 4th byte in this case is just a buffer to keep the pixels aligned on 32-bit memory addresses but in the case of sprites that last byte will represent the Alpha (transparency) channel.
 
-<img src="tutorial/data_opening_a_window_with_sdl/rgb_bytes.png">
+<img src="rgb_bytes.png">
 
 To get to our desired pixel from there we just add Y times the Width plus X. Our pixels are stored as horizontal rows so by adding Y times Width that moves us down a number of pixel rows, then adding X gets us across to the correct pixel. Try changing the X and Y coordinates of the pixel to get a better understanding of the math.
 
-<img src="tutorial/data_opening_a_window_with_sdl/pixel_indexing.png">
+<img src="pixel_indexing.png">
 
 Then we dereference that pixel and assign it a value. I wrote the pixel value in hexadecimal for clarity. In hex each byte is visible as a pair of digits, like so: 0xAARRGGBB. Go ahead and mess with that value, try making the pixel green, blue, red and combinations of those colours. Also notice that the AA byte has no apparent effect. In the window canvas those bytes are not used for rendering, but in other pixel arrays they are usually used for alpha (transparency).
 
@@ -274,4 +291,13 @@ Cheers.
 
 
 Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
-<?php include "../blogbottom.html" ?>
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>
