@@ -24,28 +24,15 @@ Since we've made a few sprite blitting functions already I'd like to write this 
 
 <code><xmp>SpriteBlitRotated(&kero_sprite, &framebuffer, x, y, rot, 32, 32);</xmp></code>
 
-The arguments are: Sprite to blit, target sprite, x/y position, rotation (in radians) on xy plane, originx/y (point about which rotation happens). Let's implement the function. We're going to construct the function in the same sort of way as the scaling function - loop through each pixel of the source image and place it in its correct position based on the given rotation/origin variables. First let's look at some trigonometry to calculate the destination point.
+The arguments are: Sprite to blit, target sprite, x/y position, rotation (in radians) on xy plane, originx/y (point about which rotation happens). Let's implement the function. We're going to construct the function in the same sort of way as the scaling function - loop through each pixel of the source image and place it in its correct position based on the given rotation/origin variables.
 
-----------------------------------------------------------INSERT IMAGE SHOWING TRIG TO CALC POSITION OF SOURCE PIXEL ON TARGET
 
---------------
-|............|
-|............|
-|....S.......|
-|.......A....|    P
-|............|
-|........R...|
-|............|
-|............|
---------------
-
-S is the source pixel. In this case 4,2
-R is the origin. In this case 8,5
-
-To find the rotated point P with the angle A we can use good ol' trig functions.
 
 Sx - originx*cos(angle) + originy*sin(angle) + originx
 Sy - originx*sin(angle) - originy*cos(angle) + originy
+
+If you want a detailed explanation and proof of the above equations check this page: https://matthew-brett.github.io/teaching/rotation_2d.html
+I think about it this way: 
 
 <code><xmp>// Top of file
 #include <math.h>

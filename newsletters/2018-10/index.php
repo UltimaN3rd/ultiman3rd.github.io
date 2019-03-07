@@ -45,7 +45,7 @@ I've somewhat recently come to the conclusion that I would like to return to mor
 
 And a boating prototype based on my fish game prototype:
 
-<video src="boat.mp4" autoplay loop/>
+<video src="boat.m4v" autoplay loop/>
 
 That's it for the first Croaking Kero Newsletter! Thanks a lot for reading and I hope you found it interesting.
 

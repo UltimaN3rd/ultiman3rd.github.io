@@ -22,7 +22,7 @@ Note: To follow this tutorial you should have a basic understanding of C.
 
 Alright, let's open a window on Linux in C! First let me show you what you'll end up with at the end of this tutorial:
 
-<img src="end_result.gif">
+<video src="end_result.m4v" autoplay loop></video>
 
 If you're on mobile that might look like a plain black window. Rest assured there is one white pixel moving around near the middle! And don't worry about how choppy that looks - that's just due to the way I recorded the gif.
 

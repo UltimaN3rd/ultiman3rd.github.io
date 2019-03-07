@@ -15,3 +15,7 @@ article {
   white-space: pre-wrap;
   padding: 50px;
 }
+
+video, img {
+  max-width: 100%;
+}

@@ -23,7 +23,7 @@ Note: This is a cross-platform adaptation of my Linux/Xlib tutorial, so Windows/
 
 Alright, let's open a window on Windows, Mac or Linux in C with SDL! First let me show you what you'll end up with at the end of this tutorial:
 
-<img src="end_result.gif">
+<video src="end_result.m4v" autoplay loop></video>
 
 If you're on mobile that might look like a plain black window. Rest assured there is one white pixel moving around near the middle! And don't worry about how choppy that looks - that's just due to the way I recorded it and converted it to a gif.
 
@@ -42,12 +42,14 @@ The full code for this tutorial can be downloaded here: <a href="https://gitlab.
 To compile and run that code write the following in a terminal the same directory as the file:
 
 Linux:
-<code><xmp>gcc opening_a_window_with_xlib.c -o bin -lSDL2
+<code><xmp>gcc opening_a_window_with_sdl.c -o bin -lSDL2
 ./bin</xmp></code>
 
-Windows (developer console). Those include/library paths will probably need editing on your machine:
-<code><xmp>cl opening_a_window_with_sdl.c -Ilibraries/include/ -link libraries/lib/SDL2.lib libraries/lib/SDL2main.lib -SUBSYSTEM:CONSOLE
+Windows (developer console x64). Those include/library paths will probably need editing on your machine:
+<code><xmp>cl opening_a_window_with_sdl.c -Ilibraries/include/ -link libraries/lib/SDL2.lib libraries/lib/SDL2main.lib legacy_stdio_definitions.lib -SUBSYSTEM:CONSOLE
 opening_a_window_with_sdl.exe</xmp></code>
+
+Yes, compiling on Windows is just as much of a nightmare as it looks. Good luck!
 
 Mac: I've got no clue since I don't have access to a Mac. If you have an old Macbook lying around send me an e-mail and I'll gladly take it off your hands!
 
