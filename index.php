@@ -28,11 +28,23 @@
 </article>
 
 <article class="game">
+  <a href="https://croakingkero.gamejolt.io/maze95" target="_blank"><img class="thumbnail" src="images/maze95.png" alt="Maze95"/></a>
+  <h3>Maze95</h3>
+  Free & open source<br/>
+  April 24th 2019<br/>
+  3d mazes<br/><br/>
+  Back in the day I always wanted to play that Windows 95 maze screensaver. 20 years later I have the programming skills and was inspired to make it! This game uses software rendering and was also a research project to learn how rendering works and become a better programmer.<br/><br/>
+  Download on <a href="https://croakingkero.gamejolt.io/maze95">GameJolt</a><br/>
+  Source code on <a href="https://gitlab.com/UltimaN3rd/3d-maze">Gitlab</a><br/><br/>
+  <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><!--<img src="images/platforms/mac.png">--></footer>
+</article>
+
+<article class="game">
   <a href="https://croakingkero.gamejolt.io/bobrossmuseum" target="_blank"><img class="thumbnail" src="images/bobross.png" alt="Bob Ross - Sliding Paintings Museum"/></a>
   <h3>Bob Ross - Sliding Paintings Museum</h3>
   Free & open source<br/>
   October 29th 2018<br/>
-  Sliding puzzles<br/>
+  Sliding puzzles<br/><br/>
   This is my tribute to the late, great painter Bob Ross. Enjoy 10 of Bob's paintings while you solve sliding puzzles.<br/><br/>
   Downloadable from <a href="https://gamejolt.com/games/bobrossmuseum/338949" target="_blank">its page on GameJolt.</a><br/><br/>
   The source code is available on <a href="https://gitlab.com/UltimaN3rd/bob-ross-sliding-paintings">GitLab.</a><br/><br/>
