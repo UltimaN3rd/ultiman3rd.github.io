@@ -14,17 +14,18 @@
 
 <section>
 
-<article class="game">
-  <a href="https://gamejolt.com/games/Notemon/327851" target="_blank"><img class="thumbnail" src="images/notemon.png" alt="Notemon"/></a>
+<!--<article class="game">
+  <a href="https://store.steampowered.com/app/1014400/Notemon/" target="_blank"><img class="thumbnail" src="images/notemon.png" alt="Notemon"/></a>
   <h3>Notemon</h3>
-  Release: 2019<br/>
+  Release: When it's ready<br/>
   Turn-based monster-taming RPG<br/>
   <a href="http://croakingkero.com/phplist/?p=subscribe&id=1" target="_blank">Get an e-mail on release day</a><br/><br/>
-  Featuring a New Zealand-inspired culture, Notemon is a monster-taming turn-based RPG in development for PICO-8. It will be the biggest PICO-8 game ever!<br/><br/>
+  Notemon is a monster-taming turn-based RPG with a New Zealand-inspired culture.<br/><br/>
   Watch my <a href="https://www.youtube.com/watch?v=HgS5gIkqb9M&list=PLPGNrHeloF_eiCo7jchppuBVf7aXUQBR7&index=1" target="_blank">Patch Notes videos</a> to see the progress I'm making on Notemon<br/>
-  Follow Notemon's development on <a href="https://gamejolt.com/games/Notemon/327851">GameJolt</a><br/>
+  Wishlist Notemon on <a href="https://store.steampowered.com/app/1014400/Notemon/">Steam</a><br/>
+  Also on <a href="https://CroakingKero.gamejolt.io/Notemon/">GameJolt</a> and <a href="https://croaking-kero.itch.io/notemon">Itchio</a><br/>
   Get gifs and other tweets about Notemon on <a href="https://twitter.com/NotemonGame">Twitter</a><br/><br/>
-  <footer class="platforms"><img src="images/platforms/pico8.png"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><img src="images/platforms/mac.png"></footer>
+  <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png">Other platforms possible.<!--<img src="images/platforms/mac.png">--></footer>
 </article>
 
 <article class="game">
@@ -34,7 +35,7 @@
   April 24th 2019<br/>
   3d mazes<br/><br/>
   Back in the day I always wanted to play that Windows 95 maze screensaver. 20 years later I have the programming skills and was inspired to make it! This game uses software rendering and was also a research project to learn how rendering works and become a better programmer.<br/><br/>
-  Download on <a href="https://croakingkero.gamejolt.io/maze95">GameJolt</a><br/>
+  Download on <a href="https://croakingkero.gamejolt.io/maze95">GameJolt</a> or <a href="https://croaking-kero.itch.io/maze95">Itch.io</a><br/>
   Source code on <a href="https://gitlab.com/UltimaN3rd/3d-maze">Gitlab</a><br/><br/>
   <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><!--<img src="images/platforms/mac.png">--></footer>
 </article>

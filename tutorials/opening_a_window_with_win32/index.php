@@ -27,7 +27,7 @@ This tutorial is split into a <a href="#Code Walkthrough">code walkthrough</a> w
 In this tutorial I'll show you how to open a window with the Windows native library in C and respond to "close" events.
 
 Firstly, here's the code <a href="main.c" target="_blank">(or download here)</a>:
-NOTE: Click any of the <a href="" target="_blank">bright green words</a> visit the MSDN documentation page for them.
+NOTE: Click any of the <a>hyperlinked words</a> to visit the MSDN documentation page for them.
 
 <code><span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;windows.h&gt;</span></span>
 <span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdbool.h&gt;</span></span>
