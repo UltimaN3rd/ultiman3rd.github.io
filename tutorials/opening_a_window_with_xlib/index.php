@@ -33,38 +33,38 @@ Before getting to the code I want to address the API in the room. I've chosen to
 The full code for this tutorial can be downloaded here: <a href="https://gitlab.com/UltimaN3rd/croaking-kero-programming-tutorials/blob/master/opening_a_window_on_linux_with_xlib/opening_a_window_with_xlib.c" target="_blank">opening_a_window_with_xlib.c</a>
 To compile and run that code write the following into a terminal in the same directory as the file:
 
-<code><xmp>gcc opening_a_window_with_xlib.c -o bin -lX11
-./bin</xmp></code>
+<code>gcc opening_a_window_with_xlib.c -o bin -lX11
+./bin</code>
 
 While reading this tutorial I highly recommend you have the Xlib documentation open: <a href="https://www.x.org/wiki/ProgrammingDocumentation/" target="_blank">https://www.x.org/wiki/ProgrammingDocumentation/</a>
 
 First thing, let's do the barest minimum to open a window.
 
-<code><xmp>#include <X11/Xlib.h>
+<code><span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;X11/Xlib.h&gt;</span></span>
 
 Display* display;
-int root_window;
-int screen;
+<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> root_window;
+<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> screen;
 Window window;
 
-void main(){
+<span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">void</span> <span style="color:rgb(240, 141, 73); font-weight:400;">main</span><span style="color:rgb(255, 255, 255); font-weight:400;">()</span></span>{
     
-    // Create window
+    <span style="color:rgb(153, 153, 153); font-weight:400;">// Create window</span>
     {
-        display = XOpenDisplay(0);
-        root_window = DefaultRootWindow(display);
-        screen = DefaultScreen(display);
-        window = XCreateWindow(display, root_window, 0, 0, 1280, 720, 0, 0, 0, 0, 0, 0);
-        XMapWindow(display, window);
-        XFlush(display);
+        display = <span style="color:rgb(240, 141, 73); font-weight:400;">XOpenDisplay</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+        root_window = <span style="color:rgb(240, 141, 73); font-weight:400;">DefaultRootWindow</span>(display);
+        screen = <span style="color:rgb(240, 141, 73); font-weight:400;">DefaultScreen</span>(display);
+        window = <span style="color:rgb(240, 141, 73); font-weight:400;">XCreateWindow</span>(display, root_window, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">720</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+        <span style="color:rgb(240, 141, 73); font-weight:400;">XMapWindow</span>(display, window);
+        <span style="color:rgb(240, 141, 73); font-weight:400;">XFlush</span>(display);
     }
     
-    for(;;){}
-}</xmp></code>
+    <span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(;;){}
+}</code>
 
 If you're getting an error that Xlib.h was not found then make sure you've installed the X11 development library. On Ubuntu type this in the terminal:
 
-<code><xmp>sudo apt install libx11-dev</xmp></code>
+<code>sudo apt install libx11-dev</code>
 
 Not a one-liner but pretty simple in any case. When running this please note the infinite loop near the bottom. Pressing the 'x' in the top of your window won't kill the process, so either hit CTRL+C in the terminal you're running this from or use Gnome System Monitor (or equivalent) to kill the process.
 
@@ -72,16 +72,16 @@ So with this pretty simple code you've got a window open on Linux! I'll just exp
 
 <a href="https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#XCreateWindow">XCreateWindow</a> is the key function here, and we're not exactly filling it out properly, but we'll fix that next. For now we're giving it the necessary display and parent, size, letting the window manager fill in some details and ignoring everything else. This just gets us an ugly transparent window, but it doesn't actually put it on the screen until we call <a href="https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#XMapWindow" target="_blank">XMapWindow</a>. This function maps our window to the screen. <a href="https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#XFlush" target="_blank">XFlush</a> makes sure the user's X server receives and processes all our currently pending requests. Without this function call your window may not open at all! Go ahead and try commenting it out to see for yourself.
 
-<code><xmp>// Top of code
-#include <X11/Xutil.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;X11/Xutil.h&gt;</span></span>
 
-        // Replace old XCreateWindow line with this
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// Replace old XCreateWindow line with this</span>
         XVisualInfo visual_info;
-        XMatchVisualInfo(display, screen, 24, TrueColor, &visual_info);
+        XMatchVisualInfo(display, screen, <span style="color:rgb(240, 141, 73); font-weight:400;">24</span>, TrueColor, &amp;visual_info);
         XSetWindowAttributes window_attributes;
-        window_attributes.background_pixel = 0;
-        window_attributes.colormap = XCreateColormap(display, root_window, visual_info.visual, AllocNone);
-        window = XCreateWindow(display, root_window, 0, 0, 1280, 720, 0, visual_info.depth, 0, visual_info.visual, CWBackPixel | CWColormap, &window_attributes);</xmp></code>
+        window_attributes.background_pixel = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
+        window_attributes.colormap = <span style="color:rgb(240, 141, 73); font-weight:400;">XCreateColormap</span>(display, root_window, visual_info.visual, AllocNone);
+        window = <span style="color:rgb(240, 141, 73); font-weight:400;">XCreateWindow</span>(display, root_window, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">720</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, visual_info.depth, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, visual_info.visual, CWBackPixel | CWColormap, &amp;window_attributes);</code>
 
 Now we've got a window that actually looks like a normal window! First we let the <a href="https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html#XMatchVisualInfo" target="_blank">XMatchVisualInfo</a> function fill in an XVisualInfo structure for us. Basically this structure tells the X server that we want 24-bit colour depth (how novel). The very existence of this little setup step is probably due to the history of X.org itself. It was originally created back when computer screens had very limited colour palettes, so even though these days you'll always want 24 bits you still have to take this step.
 
@@ -91,47 +91,47 @@ Now we pass the new visual information and attributes. Notice that we have to pa
 
 Now let's allow our program to be closed properly. First we need to tell the X server that we want to receive StructureNotify events.
 
-<code><xmp>        window_attributes.event_mask = StructureNotifyMask;</xmp></code>
+<code>        <span style="color:rgb(136, 174, 206); font-weight:400;">window_attributes.event_mask</span> = StructureNotifyMask<span style="color:rgb(153, 153, 153); font-weight:400;">;</span></code>
 
 And inside XCreateWindow we add the CWEventMask flag.
 
-<code><xmp>[...], CWBackPixel | CWColormap | CWEventMask, [...]</xmp></code>
+<code>[...], CWBackPixel | CWColormap | CWEventMask, [...]</code>
 
 Now let's handle the event. Replace the for(;;){} infinite loop with this:
 
-<code><xmp>// Top of code
-#include <stdbool.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdbool.h&gt;</span></span>
 
-    bool game_running = true;
-    while(game_running){
+    <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> game_running = <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>;
+    <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(game_running){
         XEvent e;
-        while(XPending(display) < 0){
-            XNextEvent(display, &e);
-            switch(e.type){
-                case DestroyNotify:{
-                    game_running = false;
-                }break;
+        <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">XPending</span>(display) &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>){
+            <span style="color:rgb(240, 141, 73); font-weight:400;">XNextEvent</span>(display, &amp;e);
+            <span style="color:rgb(240, 141, 73); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">switch</span></span>(e.type){
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> DestroyNotify:{
+                    game_running = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
             }
         }
-    }</xmp></code>
+    }</code>
 
 Now the game continuously loops, checking for events and handling the DestroyNotify event. Now you can close the window with the X or ALT+F4. However you may notice an error left in the console whenever it closes. It's nothing to worry about and nothing that actually has to be handled, it's just a notice from the X server. However we can close the window more cleanly by handling a different event in the form of an Atom.
 
-<code><xmp>// Top of the code
-#include <X11/Xatom.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of the code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;X11/Xatom.h&gt;</span></span>
 Atom WM_DELETE_WINDOW;
 
-        // After creating the window
-        WM_DELETE_WINDOW = XInternAtom(display, "WM_DELETE_WINDOW", False);
-        XSetWMProtocols(display, window, &WM_DELETE_WINDOW, 1);
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// After creating the window</span>
+        WM_DELETE_WINDOW = XInternAtom(display, <span style="color:rgb(181, 189, 104); font-weight:400;">&quot;WM_DELETE_WINDOW&quot;</span>, False);
+        XSetWMProtocols(display, window, &amp;WM_DELETE_WINDOW, <span style="color:rgb(240, 141, 73); font-weight:400;">1</span>);
 
-                // Inside switch(e.type)
-                case ClientMessage:{
-                    XClientMessageEvent* ev = (XClientMessageEvent*)&e;
-                    if((Atom)ev->data.l[0] == WM_DELETE_WINDOW){
-                        game_running = false;
+                <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside switch(e.type)</span>
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> ClientMessage:{
+                    <span style="color:rgb(240, 141, 73); font-weight:400;">XClientMessageEvent</span>* ev = (<span style="color:rgb(240, 141, 73); font-weight:400;">XClientMessageEvent</span>*)&amp;e;
+                    <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>((Atom)ev-&gt;data.l[<span style="color:rgb(240, 141, 73); font-weight:400;">0</span>] == WM_DELETE_WINDOW){
+                        game_running = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
                     }
-                }break;</xmp></code>
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;</code>
 
 First we include Xatom, so we can use Atoms. Atoms are just labels for properties inside X. Don't ask me why they're called Atoms instead of labels or something intuitive. That's open source software for you aye? You can create your own atoms and tell X about them in order to transfer certain information, or use preexisting ones. In this case we ask X for the "WM_DELETE_WINDOW" atom, then set the window protocols to just that one. You can set multiple atoms by sending an array and the count of said array.
 
@@ -139,25 +139,25 @@ Then we handle the event. Whenever we receive a ClientMessage event we check to 
 
 Next let's handle some input so we can close the window with the escape key.
 
-<code><xmp>// Top of file
-#define XK_MISCELLANY
-#define XK_LATIN1
-#include <X11/keysymdef.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of file</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">define</span> XK_MISCELLANY</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">define</span> XK_LATIN1</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;X11/keysymdef.h&gt;</span></span>
 
-        // Inside window creation
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside window creation</span>
         window_attributes.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask;
 
-            // Inside switch(e.type)
-                case KeyPress:{
-                    int symbol = XLookupKeysym(&e.xkey, 0);
-                    switch(symbol){
-                        case XK_Escape:{
-                            game_running = false;
-                        }break;
+            <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside switch(e.type)</span>
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> KeyPress:{
+                    <span style="color:rgb(136, 174, 206); font-weight:400;">int</span> symbol = <span style="color:rgb(240, 141, 73); font-weight:400;">XLookupKeysym</span>(&amp;e.xkey, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+                    <span style="color:rgb(240, 141, 73); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">switch</span></span>(symbol){
+                        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> XK_Escape:{
+                            game_running = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
+                        }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
                     }
-                }break;
-                case KeyRelease:{
-                }break;</xmp></code>
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> KeyRelease:{
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;</code>
 
 First we use some defines to pick which keysyms we want to use from keysymdef.h. You can poke around that file to see all the keysyms but for now those two will do. XK_MISCELLANY contains XK_Escape and XK_LATIN1 contains regular keys like the arrows which we'll use later.
 
@@ -165,21 +165,21 @@ Next we tell X that we want to receive KeyPress and KeyRelease events and handle
 
 Now let's get something on the screen other than a black window!
 
-<code><xmp>// Top of file
-#include <stdint.h>
-#include <stdlib.h>
-uint8_t* canvas;
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of file</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdint.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdlib.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>* canvas;
 XImage window_image;
 GC graphics_context;
 
-        // Inside window creation
-        canvas = (uint8_t*)malloc(1280*720*4);
-        window_image = XCreateImage(display, visual_info.visual, visual_info.depth, ZPixmap, 0, (char*)canvas, 1280, 720, 32, 0);
-        graphics_context = DefaultGC(display, screen);
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside window creation</span>
+        canvas = (<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>*)<span style="color:rgb(240, 141, 73); font-weight:400;">malloc</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>*<span style="color:rgb(240, 141, 73); font-weight:400;">720</span>*<span style="color:rgb(240, 141, 73); font-weight:400;">4</span>);
+        window_image = <span style="color:rgb(240, 141, 73); font-weight:400;">XCreateImage</span>(display, visual_info.visual, visual_info.depth, ZPixmap, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, (<span style="color:rgb(136, 174, 206); font-weight:400;">char</span>*)canvas, <span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">720</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">32</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+        graphics_context = <span style="color:rgb(240, 141, 73); font-weight:400;">DefaultGC</span>(display, screen);
 
-        // End of main loop
-        *((uint32_t*)(canvas) + 128*1280+64) = 0xffffffff;
-        XPutImage(display, window, graphics_context, window_image, 0, 0, 0, 0, 1280, 720);</xmp></code>
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// End of main loop</span>
+        *((<span style="color:rgb(136, 174, 206); font-weight:400;">uint32_t</span>*)(canvas) + <span style="color:rgb(240, 141, 73); font-weight:400;">128</span>*<span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>+<span style="color:rgb(240, 141, 73); font-weight:400;">64</span>) = <span style="color:rgb(240, 141, 73); font-weight:400;">0xffffffff</span>;
+        <span style="color:rgb(240, 141, 73); font-weight:400;">XPutImage</span>(display, window, graphics_context, window_image, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">1280</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">720</span>);</code>
 
 I included stdint just so I can use uint8_t and other such types. If you'd rather you can use unsigned char* and the other equivalents but I find the stdint types to be clearer. We create an array of bytes (uint8_t) for the drawing canvas, an XImage to deliver our pixels to the screen and a graphics context. A graphics context is required to enable us to draw to the screen.
 
@@ -199,91 +199,91 @@ Then we dereference that pixel and assign it a value. I wrote the pixel value in
 
 Alright, now let's make it interactive! First I replaced all the instances of 1280 and 720 with the variables window_width and window_height.
 
-<code><xmp>    // Before main loop
-    int x = 0, y = 0;
+<code>    <span style="color:rgb(153, 153, 153); font-weight:400;">// Before main loop</span>
+    <span style="color:rgb(136, 174, 206); font-weight:400;">int</span> x = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, y = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
 
-                    // Inside KeyPress switch(symbol)
-                        case XK_Up:{
-                            if(--y < 0){
-                                y = 0;
+                    <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside KeyPress switch(symbol)</span>
+                        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> XK_Up:{
+                            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(--y &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>){
+                                y = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
                             }
-                        }break;
-                        case XK_Down:{
-                            if(++y >= window_height){
-                                y = window_height-1;
+                        }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+                        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> XK_Down:{
+                            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(++y &gt;= window_height){
+                                y = window_height<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
                             }
-                        }break;
-                        case XK_Left:{
-                            if(--x < 0){
-                                x = 0;
+                        }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+                        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> XK_Left:{
+                            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(--x &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>){
+                                x = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
                             }
-                        }break;
-                        case XK_Right:{
-                            if(++x >= window_width){
-                                x = window_width-1;
+                        }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+                        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> XK_Right:{
+                            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(++x &gt;= window_width){
+                                x = window_width<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
                             }
-                        }break;
+                        }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
 
-        // End of main loop
-        *((uint32_t*)(canvas) + y*window_width+x) = 0xffff0000;</xmp></code>
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// End of main loop</span>
+        *((<span style="color:rgb(136, 174, 206); font-weight:400;">uint32_t</span>*)(canvas) + y*window_width+x) = <span style="color:rgb(240, 141, 73); font-weight:400;">0xffff0000</span>;</code>
 
 Now we use an x and y variable to index our pixel and move it around with the arrow keys. Of course we have to make sure it doesn't go out of the array bounds or we'll crash, which is what all those if statements are about. That's nice enough, but what about being able to hold an arrow key down to continously move the dot?
 
-<code><xmp>// Top of code
-bool keyboard[256] = {0};
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> keyboard[<span style="color:rgb(240, 141, 73); font-weight:400;">256</span>] = {<span style="color:rgb(240, 141, 73); font-weight:400;">0</span>};
 
-                    // Inside KeyPress event
-                    keyboard[(uint8_t)symbol] = true;
+                    <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside KeyPress event</span>
+                    keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)symbol] = <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>;
 
-                    // Inside KeyRelease event
-                    keyboard[(uint8_t)symbol] = false;
+                    <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside KeyRelease event</span>
+                    keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)symbol] = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
 
-        // Before setting the pixel
-        if(keyboard[(uint8_t)XK_Up]){
-            if(--y < 0){
-                y = 0;
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// Before setting the pixel</span>
+        <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)XK_Up]){
+            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(--y &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>){
+                y = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
             }
         }
-        if(keyboard[(uint8_t)XK_Down]){
-            if(++y >= window_height){
-                y = window_height-1;
+        <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)XK_Down]){
+            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(++y &gt;= window_height){
+                y = window_height<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
             }
         }
-        if(keyboard[(uint8_t)XK_Left]){
-            if(--x < 0){
-                x = 0;
+        <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)XK_Left]){
+            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(--x &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>){
+                x = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
             }
         }
-        if(keyboard[(uint8_t)XK_Right]){
-            if(++x >= window_width){
-                x = window_width-1;
+        <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(keyboard[(<span style="color:rgb(136, 174, 206); font-weight:400;">uint8_t</span>)XK_Right]){
+            <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(++x &gt;= window_width){
+                x = window_width<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
             }
-        }</xmp></code>
+        }</code>
 
 We create an array of bools to hold our keyboard values and set them inside the key events. The XK_ values are 16 bits but they all seem to start with 0xff so we can truncate the high byte and index the keys by the low byte. That way we can have a keyboard array of 256 values instead of 65536! In your programs you may want to make some uint8_t const variables like KEY_DOWN = (uint8_t)XK_Down.
 
 There are a couple of hang-ups to be addressed in relation to this method of keyboard handling. If you manage to tab out of the window with a key pressed our program won't be sent the key release event and will still think that key is pressed even after it's released. That's why many games back in the day (and even some today, ESO. . .) will have your character infinitely walking against a wall when you tab out. All we have to do to solve this problem is handle a new event.
 
-<code><xmp>// Top of code
-#include <string.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;string.h&gt;</span></span>
 
-// Add to window_attributes.event_mask
+<span style="color:rgb(153, 153, 153); font-weight:400;">// Add to window_attributes.event_mask</span>
  | FocusChangeMask
 
-// Inside switch(e.type)
-                case FocusOut:{
-                    memset(keyboard, false, sizeof(keyboard));
-                }break;</xmp></code>
+<span style="color:rgb(153, 153, 153); font-weight:400;">// Inside switch(e.type)</span>
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> FocusOut:{
+                    <span style="color:rgb(240, 141, 73); font-weight:400;">memset</span>(keyboard, <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>, <span style="color:rgb(240, 141, 73); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">sizeof</span></span>(keyboard));
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;</code>
 
 Now when we tab out all the keys will be set to false. Go ahead and try removing/adding the memset line and run the program. Hold an arrow key and click outside the window, then tab back in and you'll see your pixel still drawing a line across the screen.
 
 The other keyboard issue we should solve is key repeat. You may not notice it yet but our program is being sent KeyRelease and KeyPress events over and over whenever a key is held. Key repeats are what allow you to hold the backspace key to erase many letters, but in games they're a pain. It's easy to disable these events with Xlib.
 
-<code><xmp>// Top of code
-#include <X11/XKBlib.h>
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;X11/XKBlib.h&gt;</span></span>
 
-        // After window creation
-        XkbSetDetectableAutoRepeat(display, True, 0);</xmp></code>
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// After window creation</span>
+        <span style="color:rgb(240, 141, 73); font-weight:400;">XkbSetDetectableAutoRepeat</span>(display, True, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);</code>
 
 That's it! Now we'll no longer receive repeat KeyRelease events. We'll still get the KeyPress ones but that shouldn't be a problem. If it is, just check if(!keyboard[(uint8_t)symbol] inside the KeyPress case you're checking.
 
@@ -291,52 +291,52 @@ This one problem is a big reason I chose to use Xlib instead of XCB. You can dis
 
 Alright, now let's imagine our little pixel is a character. Well they're leaving an embarrassing streak across the screen so let's clear the pixel buffer every frame before drawing.
 
-<code><xmp>        // Start of main loop
-        memset(canvas, 0, window_width*window_height*4);</xmp></code>
+<code>        <span style="color:rgb(153, 153, 153); font-weight:400;">// Start of main loop</span>
+        <span style="color:rgb(240, 141, 73); font-weight:400;">memset</span>(canvas, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, window_width*window_height*<span style="color:rgb(240, 141, 73); font-weight:400;">4</span>);</code>
 
 Good as gold! Now there's only one thing left. What's with all the stuttering? It's a simple program so we should have an excellent framerate right? Well we do (unless you're running loads of programs in the background) but X can't really handle being sent a full-window image 400 times per second. Now let's add some timing code so we can limit how often we're sending our buffer to X, and save our CPU fans from having to wind up to 100% every time the game runs.
 
 First let me show you timespec. Timespec is just a struct that holds an amount of time in seconds and nanoseconds, like so:
 
-<code><xmp>struct timespec{
-    time_t tv_sec;
-    long   tv_nsec;
-};</xmp></code>
+<code><span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> <span style="color:rgb(240, 141, 73); font-weight:400;">timespec</span>{</span>
+    <span style="color:rgb(136, 174, 206); font-weight:400;">time_t</span> tv_sec;
+    <span style="color:rgb(136, 174, 206); font-weight:400;">long</span>   tv_nsec;
+};</code>
 
 For a time of 12.777000555 seconds, that would look like:
 
-<code><xmp>timespec t;
-t.tv_sec = 12;
-t.tv_nsec = 777000555;</xmp></code>
+<code><span style="color:rgb(255, 255, 255); font-weight:400;">timespec</span> t;
+<span style="color:rgb(255, 255, 255); font-weight:400;">t</span>.tv_sec = <span style="color:rgb(240, 141, 73); font-weight:400;">12</span>;
+<span style="color:rgb(255, 255, 255); font-weight:400;">t</span>.tv_nsec = <span style="color:rgb(240, 141, 73); font-weight:400;">777000555</span>;</code>
 
 As you can see the nanoseconds are stored as a positive integer, so in order to combine those two values together into nanoseconds you need to multiply tv_sec by 1 billion. To combine them into a value of seconds you must divide tv_nsec by 1 billion. We want to measure in nanoseconds since we'll always be sleeping for some number of nanoseconds, not seconds.
 
-<code><xmp>// Top of code
-#include <stdio.h>
-#include <time.h>
-typedef struct timespec timespec;
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Top of code</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdio.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;time.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> timespec timespec;
 
-    // Before main loop
+    <span style="color:rgb(153, 153, 153); font-weight:400;">// Before main loop</span>
     timespec frame_start;
     timespec frame_finish;
-    clock_gettime(CLOCK_REALTIME, &frame_start);
-    unsigned long target_frame_time = 1000000000/60; //60 fps in nano seconds. 1billion nanoseconds / 60 frames
+    clock_gettime(<span style="color:rgb(240, 141, 73); font-weight:400;">CLOCK_REALTIME</span>, &amp;frame_start);
+    <span style="color:rgb(136, 174, 206); font-weight:400;">unsigned</span> <span style="color:rgb(136, 174, 206); font-weight:400;">long</span> target_frame_time = <span style="color:rgb(240, 141, 73); font-weight:400;">1000000000</span>/<span style="color:rgb(240, 141, 73); font-weight:400;">60</span>; <span style="color:rgb(153, 153, 153); font-weight:400;">//60 fps in nano seconds. 1billion nanoseconds / 60 frames</span>
 
-        // End of main loop after XPutImage
-        clock_gettime(CLOCK_REALTIME, &frame_finish);
-        unsigned long frame_time = (frame_finish.tv_sec - frame_start.tv_sec)*1000000000 + (frame_finish.tv_nsec - frame_start.tv_nsec);
+        <span style="color:rgb(153, 153, 153); font-weight:400;">// End of main loop after XPutImage</span>
+        clock_gettime(<span style="color:rgb(240, 141, 73); font-weight:400;">CLOCK_REALTIME</span>, &amp;frame_finish);
+        <span style="color:rgb(136, 174, 206); font-weight:400;">unsigned</span> <span style="color:rgb(136, 174, 206); font-weight:400;">long</span> frame_time = (frame_finish.tv_sec - frame_start.tv_sec)*<span style="color:rgb(240, 141, 73); font-weight:400;">1000000000</span> + (frame_finish.tv_nsec - frame_start.tv_nsec);
         timespec sleep_time;
-        sleep_time.tv_sec = 0;
+        sleep_time.tv_sec = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
         sleep_time.tv_nsec = target_frame_time - frame_time;
-        nanosleep(&sleep_time, 0);
+        nanosleep(&amp;sleep_time, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
         
-        clock_gettime(CLOCK_REALTIME, &frame_finish);
-        delta = (frame_finish.tv_sec - frame_start.tv_sec) + (frame_finish.tv_nsec - frame_start.tv_nsec)/1000000000.f;
+        clock_gettime(<span style="color:rgb(240, 141, 73); font-weight:400;">CLOCK_REALTIME</span>, &amp;frame_finish);
+        delta = (frame_finish.tv_sec - frame_start.tv_sec) + (frame_finish.tv_nsec - frame_start.tv_nsec)/<span style="color:rgb(240, 141, 73); font-weight:400;">1000000000.</span>f;
         frame_start = frame_finish;
         
-        char window_title[30];
-        sprintf(window_title, "Nick's Xlib window. FPS: %0.02f", 1.f/delta);
-        XStoreName(display, window, window_title);</xmp></code>
+        <span style="color:rgb(136, 174, 206); font-weight:400;">char</span> window_title[<span style="color:rgb(240, 141, 73); font-weight:400;">30</span>];
+        sprintf(window_title, <span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Nick&#x27;s Xlib window. FPS: %0.02f&quot;</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">1.</span>f/delta);
+        XStoreName(display, window, window_title);</code>
 
 That looks a bit complex but it's ulimately pretty simple.
 
@@ -348,17 +348,17 @@ We set frame_start to frame_finish, then create a char* buffer to store our wind
 
 I'd say we're in pretty good shape at this point, but before ending this tutorial I'll show you how to handle window resizing. Just a bit of housekeeping aye?
 
-<code><xmp>            // Inside switch(e.type)
-                case ConfigureNotify:{
-                    XConfigureEvent* ev = (XConfigureEvent*)&e;
-                    if(ev->width != window_width or ev->height != window_height){
-                        window_width = ev->width;
-                        window_height = ev->height;
+<code>            <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside switch(e.type)</span>
+                <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> ConfigureNotify:{
+                    <span style="color:rgb(240, 141, 73); font-weight:400;">XConfigureEvent</span>* ev = (<span style="color:rgb(240, 141, 73); font-weight:400;">XConfigureEvent</span>*)&amp;e;
+                    <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(ev-&gt;width != window_width or ev-&gt;height != window_height){
+                        window_width = ev-&gt;width;
+                        window_height = ev-&gt;height;
                         XDestroyImage(window_image);
-                        canvas = (uint8_t*)malloc(window_width*window_height*4);
-                        window_image = XCreateImage(display, visual_info.visual, visual_info.depth, ZPixmap, 0, (char*)canvas, window_width, window_height, 32, 0);
+                        canvas = (uint8_t*)malloc(window_width*window_height*<span style="color:rgb(240, 141, 73); font-weight:400;">4</span>);
+                        window_image = <span style="color:rgb(240, 141, 73); font-weight:400;">XCreateImage</span>(display, visual_info.visual, visual_info.depth, ZPixmap, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, (<span style="color:rgb(136, 174, 206); font-weight:400;">char</span>*)canvas, window_width, window_height, <span style="color:rgb(240, 141, 73); font-weight:400;">32</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
                     }
-                }break;</xmp></code>
+                }<span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;</code>
 
 You might get an error that "visual_info was not declared in this scope" if you put your window creation code inside its own scope earlier. Just lift that XVisualInfo visual_info; line up out into the main() scope.
 
@@ -366,12 +366,12 @@ Now when we receive a ConfigureNotify event we check if part of that event is ch
 
 There's one last issue to quickly solve with resizing and that's keeping our x/y values in bounds! When we set our pixel we are taking the pointer to the first pixel on the screen and moving along to our x,y coordinate. If this goes out of the bounds of the pixel buffer we may get an access violation, or worse, we might get no error at all! This would mean we may corrupt other parts of our program's memory without realizing it, so let's do a bounds check on resize.
 
-<code><xmp>// Top of file
-#define Min(a, b) ((a)<(b) ? (a):(b))
+<code><span style="color:rgb(255, 255, 255); font-weight:400;">/</span><span style="color:rgb(255, 255, 255); font-weight:400;">/</span> Top <span style="color:rgb(136, 174, 206); font-weight:400;">of</span> file
+#<span style="color:rgb(136, 174, 206); font-weight:400;">define</span> <span style="color:rgb(240, 141, 73); font-weight:400;">Min</span>(a, b) ((a)<span style="color:rgb(255, 255, 255); font-weight:400;">&lt;</span>(b) ? (a):(b))
 
-                        // Inside window resize event
-                        x = Min(x, window_width-1);
-                        y = Min(y, window_height-1);</xmp></code>
+                        <span style="color:rgb(255, 255, 255); font-weight:400;">/</span><span style="color:rgb(255, 255, 255); font-weight:400;">/</span> Inside <span style="color:rgb(136, 174, 206); font-weight:400;">window</span> resize event
+                        x <span style="color:rgb(255, 255, 255); font-weight:400;">=</span> <span style="color:rgb(240, 141, 73); font-weight:400;">Min</span>(x, window_width<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>);
+                        y <span style="color:rgb(255, 255, 255); font-weight:400;">=</span> <span style="color:rgb(240, 141, 73); font-weight:400;">Min</span>(y, window_height<span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>);</code>
 
 In practice you'll want to access the pixel buffer with a function like SetPixel(x, y, colour) which has bounds checking built in.
 
