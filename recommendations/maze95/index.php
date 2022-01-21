@@ -117,14 +117,14 @@
 </article>
 
 <article class="game">
-  <a href="https://ooblets.com/" target="_blank"><img class="thumbnail" src="/recommendations/maze95/ooblets.png" alt="Ooblets"/></a>
-  <h3>Ooblets</h3>
-  By Glumberland<br/>
-  $?<br/>
-  Peaceful farming & creature-collecting<br/><br/>
-  If Ooblets isn't the cutest game you've ever seen, you must tweet whatever is cuter to me! Who doesn't want to farm, collect creatures and have dance battles?! Beth and I can't wait for this game to come out!<br/><br/>
-  <a href="https://ooblets.com/" target="_blank">Ooblets.com</a><br/>
-  <a href="https://glumberland.com/" target="_blank">Glumberland.com</a>
+  <a href="https://store.steampowered.com/app/778330/Squirm/" target="_blank"><img class="thumbnail" src="/recommendations/maze95/squirm.png" alt="Squirm"/></a>
+  <h3>Squirm</h3>
+  By Alex Carpenter<br/>
+  $2<br/>
+  Challenging 2D adventure platform<br/><br/>
+  Great mechanics and a well-designed world! This game only took me less than 2 hours to complete the first time, but I went back through to get all the achievements and my best 100% speedrun time is 33m 44s!<br/><br/>
+  <a href="https://store.steampowered.com/app/778330/Squirm/" target="_blank">Squirm on Steam</a><br/>
+  <a href="https://gamejolt.com/games/squim/277198" target="_blank">Squim, the free precursor to Squirm</a>
 </article>
 
 </section>
@@ -133,6 +133,6 @@
 
 
 
-<?php include "footer_common.html" ?>
+<?php include "../../footer_common.html" ?>
 
 </html>
