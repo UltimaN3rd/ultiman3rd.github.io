@@ -22,10 +22,10 @@
 
 Note: To follow this tutorial you should have a basic understanding of C.
 
-<code><xmp>Code example
+<code>Code example
 for(int i = 0; i < 4; ++i) {
 	j = i*i;
-}</xmp></code>
+}</code>
 
 That's it for this tutorial! If you have any issues compiling the code just download the full source and compile that to make sure it works, then examine the differences closely to see what you've done wrong.
 

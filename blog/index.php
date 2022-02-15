@@ -36,6 +36,7 @@ way to make a game (Wireframe issue 29, pages 36-37)</a><br/>
   <a href="/tutorials/opening_a_window_with_xlib/">Opening a Window on Linux with Xlib</a><br/>
   <a href="/tutorials/opening_a_window_with_sdl/">Opening a Window with SDL</a><br/>
   <a href="/tutorials/opening_a_window_with_win32/">Opening a Window with Win32 in C</a><br/>
+  <a href="/tutorials/drawing_pixels_win32_gdi/">Drawing Pixels to a Win32 Window in C with GDI</a><br/>
   <a href="https://wireframe.raspberrypi.org/issues/18">Create Mazes with Two Easy Algorithms (Wireframe issue 18, pages 32-35)</a><br/>
   <!--<a href="tutorials/sprite_loading_blitting_and_transforming/">Sprite loading, blitting and transforming</a><br/>-->
 </article>
