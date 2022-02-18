@@ -3,6 +3,7 @@ code{
  padding-left:50px;
  padding-right:50px;
  display:inline-block;
+ tab-size:4;
 }
 code:after{
  content:"\a\a";
