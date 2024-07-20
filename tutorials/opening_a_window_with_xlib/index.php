@@ -351,7 +351,7 @@ I'd say we're in pretty good shape at this point, but before ending this tutoria
 <code>            <span style="color:rgb(153, 153, 153); font-weight:400;">// Inside switch(e.type)</span>
                 <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> ConfigureNotify:{
                     <span style="color:rgb(240, 141, 73); font-weight:400;">XConfigureEvent</span>* ev = (<span style="color:rgb(240, 141, 73); font-weight:400;">XConfigureEvent</span>*)&amp;e;
-                    <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(ev-&gt;width != window_width or ev-&gt;height != window_height){
+                    <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(ev-&gt;width != window_width || ev-&gt;height != window_height){
                         window_width = ev-&gt;width;
                         window_height = ev-&gt;height;
                         XDestroyImage(window_image);

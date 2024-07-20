@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<!-- Code syntax highlighting generated using codebeautify.org/code-highlighter with the "Stackoverflow Dark" style. -->
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
+<h4>Multi-Threaded Game Framework in C on Windows</h4>
+
+This tutorial is also available as a <a href="https://www.youtube.com/watch?v=1bAb1CfgZrs" target="_blank">video.</a>
+
+In this tutorial I’ll show you how to create a multi-threaded game program framework with the Win32 native library. I've left out sound and other peripheral systems for now, but they'll be easy to add on once you understand the framework.
+
+Note: I’m compiling this code with GCC.
+Note: Click any of the <a>hyperlinked words</a> to visit the MSDN documentation page for them.
+Note: I've dimmed all of the code not specific to the subject of the tutorial.
+Note: The code listings are quite long so instead of a readable complete listing at the top of the HTML page, I've linked a download for the code files below. Only code snippets are shown throughout the tutorial and I encourage you to open up the code files on the side to follow through with the tutorial properly.
+
+<a href="multi-threaded framework.zip" download>multi-threaded framework.zip</a>
+
+<hr>
+<h4><a id="Code Walkthrough" style="color:rgb(255,255,255);">Code Walkthrough</a></h4>
+
+In this multi-threaded game program framework, each major system gets its own thread. The main thread initiates the program, memory and other threads and goes on to handle operating system events. In separate threads we run the game update loop at a fixed rate of 120Hz, and render at the refresh rate of the player’s monitor, up to 120Hz. Sound and any other distinct systems will also get their own threads. The update thread communicates with the render thread by filling “render state” structures with all the information needed to render the latest game state, and the render thread reads the latest available state to render.
+
+I picked 120Hz for the update rate because it allows for a very fast response to input events, a small enough step to avoid common physics problems, a higher possible refresh rate for the display, and still lets the CPU sleep for a bit between updates to avoid melting. Rendering will be limited to 120Hz. It’s possible to go beyond that by interpolating between game states but that’s unnecessary complexity for this tutorial series.
+
+The program is organized into several files:
+main.c contains the entry-point, a bunch of data initialization, and program setup. It also has the Windows setup code and event handling.
+render.h and update.h are not traditional headers, but instead contain the entire code for each of those systems. They’re made as header files for easy inclusion and building.
+globals.h has types, a few enumerators and macros, and most of the libraries used by the program.
+There’s no sound.h yet. As a rule, the major systems – update, render, sound, whatever else comes along, are included by main.c. Libraries specific to one system are included in that file and all shared libraries are included by globals.h.
+
+Much of the code is normal stuff from my previous tutorials, so I’ll focus on the multi-threading code specific to this framework. I’ve also implemented a very simple and bad bouncing balls simulation just for demonstration.
+
+We need process.h to access Windows’ native threading library.
+
+<code><span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">uintptr_t</span> thread_render, thread_update;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">render_data_t</span> render_data = {
+	.quit = &amp;quit,
+	.update_render_swap_state_atom = &amp;update_render_swap_state_atom,
+	.render_states = render_states,
+	.window_handle = &amp;window_handle,
+	.frame = &amp;frame,
+};
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">update_data_t</span> update_data = {
+	.quit = &amp;quit,
+	.update_render_swap_state_atom = &amp;update_render_swap_state_atom,
+	.source_keyboard = keyboard,
+	.render_states = render_states,
+};</code>
+Here we initialize the data for the render and update threads, including setting a bunch of pointers to shared variables in the main file.
+
+<code>	<span style="color:rgb(153, 153, 153); font-weight:400;">// Setup initial simulation state</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> i = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>; i &lt; BALL_COUNT; ++i) {
+		update_data.balls[i].x  = <span style="color:rgb(240, 141, 73); font-weight:400;">randf_range</span>(BALL_RADIUS, RESOLUTION_WIDTH  - BALL_RADIUS);
+		update_data.balls[i].y  = <span style="color:rgb(240, 141, 73); font-weight:400;">randf_range</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">30</span>, RESOLUTION_HEIGHT - BALL_RADIUS);
+		update_data.balls[i].vx = <span style="color:rgb(240, 141, 73); font-weight:400;">randf_range</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">-0.5f</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0.5f</span>);
+		update_data.balls[i].vy = <span style="color:rgb(240, 141, 73); font-weight:400;">randf_range</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">-0.5f</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0.5f</span>);
+	}</code>
+Before starting the threads, we loop through the balls in update_data to set their starting positions and velocities.
+
+<code>	<span style="color:rgb(153, 153, 153); font-weight:400;">// Start system threads</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>((thread_update = _beginthread(&amp;Update, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, (<span style="color:rgb(136, 174, 206); font-weight:400;">void</span>*)&amp;update_data)) == <span style="color:rgb(240, 141, 73); font-weight:400;">-1ul</span>) {
+		<span style="color:rgb(240, 141, 73); font-weight:400;">PRINT_ERROR</span>(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;_beginthread(update) failed.&quot;</span>);
+		<span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
+	}
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>((thread_render = _beginthread(Render, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, (<span style="color:rgb(136, 174, 206); font-weight:400;">void</span>*)&amp;render_data)) == <span style="color:rgb(240, 141, 73); font-weight:400;">-1ul</span>) {
+		<span style="color:rgb(240, 141, 73); font-weight:400;">PRINT_ERROR</span>(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;_beginthread(render) failed.&quot;</span>);
+		<span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
+	}</code>
+Next we start the update and render threads with _beginthread, passing a pointer to the function the thread should execute – the thread’s entry-point. We can set the thread’s stack size, or pass 0 to set it to the same size as the main thread’s. Last is a pointer to the arguments we wish to send along to the thread, so we send a pointer to the update or render data respectively. _beginthread returns the thread handle or -1 for an error. Since it’s an unsigned integer return type, -1 wraps around.
+
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">static</span> MSG message = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
+	<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(<span style="color:rgb(240, 141, 73); font-weight:400;">GetMessage</span>(&amp;message, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>) != <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> &amp;&amp; !quit) { <span style="color:rgb(240, 141, 73); font-weight:400;">DispatchMessage</span>(&amp;message);  }</code>
+Main then enters the Windows message processing loop.
+
+Let’s look at globals.h before proceeding to update and render. First we have a few global definitions and standard libraries. The more interesting things are the data types.
+
+<code><span style="color:rgb(153, 153, 153); font-weight:400;">// Render-specific structures</span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> {</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">float</span> x, y;
+} <span style="color:rgb(136, 174, 206); font-weight:400;">ball_render_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> {</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> busy;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">uint64_t</span> update_count;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">ball_render_t</span> balls[BALL_COUNT];
+} <span style="color:rgb(136, 174, 206); font-weight:400;">render_state_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> {</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> *quit;
+	_Atomic <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> *update_render_swap_state_atom;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">render_state_t</span> *render_states;
+	HWND *window_handle;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">sprite_t</span> *frame;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">uint32_t</span> ball_color[BALL_COUNT];
+} <span style="color:rgb(136, 174, 206); font-weight:400;">render_data_t</span>;
+
+<span style="color:rgb(153, 153, 153); font-weight:400;">// Update-specific structures</span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> {</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">float</span> x, y, vx, vy;
+} <span style="color:rgb(136, 174, 206); font-weight:400;">ball_update_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">struct</span> {</span>
+	<span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> *quit;
+	_Atomic <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> *update_render_swap_state_atom;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">render_state_t</span> *render_states;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> *source_keyboard;
+	<span style="color:rgb(136, 174, 206); font-weight:400;">ball_update_t</span> balls[BALL_COUNT];
+} <span style="color:rgb(136, 174, 206); font-weight:400;">update_data_t</span>;</code>
+For my crappy ball simulation, I’ve got two different ball structures. One holding all the information needed for the update thread, and the other for the render thread. This kind of data separation helps to keep structure sizes minimal per-thread and makes it easy to manage. We have the update and render data structures which share several pointers to main-thread variables, then have a couple of unique items. update_data_t has an array of ball_updates and render_data has ball_colours. The ball_render structures dwell in the render_states, since that information will be changed by each update whereas the colours are set once in the render thread. Each structure points to the render state array and the update_render_swap_state_atom, which is used to provide mutually exclusive access to the render states when each thread is selecting which state to use for its next iteration.
+
+<code><span style="color:rgb(136, 174, 206); font-weight:400;">void</span> Update(<span style="color:rgb(136, 174, 206); font-weight:400;">void</span> *data_void) {
+	update_data_t *data = (update_data_t*)data_void;
+
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> LARGE_INTEGER tick_rate, ticks_last, ticks_now;
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> uint64_t ticks_per_frame;
+	QueryPerformanceFrequency(&amp;tick_rate);
+	ticks_per_frame = tick_rate.QuadPart / <span style="color:rgb(240, 141, 73); font-weight:400;">120</span>; <span style="color:rgb(153, 153, 153); font-weight:400;">// Update rate = 120Hz</span>
+	QueryPerformanceCounter(&amp;ticks_last);
+
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> uint64_t update_count = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> keyboard[<span style="color:rgb(240, 141, 73); font-weight:400;">256</span>];</code>
+The update thread’s entry-point is this Update function. First we cast the void pointer to the actual update_data pointer we know it is, setup some timing variables, the update count and keyboard state array.
+
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!*data-&gt;quit) {
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Capture current keyboard state</span>
+		memcpy(keyboard, data-&gt;source_keyboard, <span style="color:rgb(240, 141, 73); font-weight:400;">256</span>);
+
+		<span style="color:rgb(153, 153, 153); font-weight:400;">/****************************************************
+		 * Game logic
+		 ****************************************************/</span></code>
+Now Update enters its main loop. At the start of each update we capture the current state of the keyboard, then process the game logic – in this case a very bad ball simulation, the details of which aren’t important beyond that each ball moves and collides.
+
+Now for the juicy threading code! What we want to do is select the oldest render state not currently being used by the render thread, then fill it with the latest render state information.
+
+<code>		<span style="color:rgb(153, 153, 153); font-weight:400;">// Create a render state based on current game state</span>
+		{	<span style="color:rgb(153, 153, 153); font-weight:400;">// Select oldest non-busy render state to replace</span>
+			<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">int</span> found;
+			<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> uint64_t lowest_update_count;
+			found = -<span style="color:rgb(240, 141, 73); font-weight:400;">1</span>;
+			lowest_update_count = -<span style="color:rgb(240, 141, 73); font-weight:400;">1</span>;
+
+			<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!__sync_bool_compare_and_swap(data-&gt;update_render_swap_state_atom, <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>));
+
+			<span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> i = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>; i &lt; <span style="color:rgb(240, 141, 73); font-weight:400;">3</span>; ++i) {
+				<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(!data-&gt;render_states[i].busy &amp;&amp; data-&gt;render_states[i].update_count &lt; lowest_update_count) {
+					found = i;
+					lowest_update_count = data-&gt;render_states[i].update_count;
+				}
+			}</code>
+First we use this while loop, calling an atomic compare and swap function. Atomic functions happen in a single CPU cycle and are guaranteed to maintain thread coherence. So we compare the swap atom’s value to false and replace it with true in a single CPU cycle. If it was already true it remains true and we try again. If it was false then it’s now true and we exit the loop. Once we’ve succeeded we can proceed to select a render state knowing that if the render thread catches up and tries to enter its own state selection, it’ll continuously fail the atomic function until we set the atom to false when we’re done. So we loop through all 3 render states, finding the ones that aren’t marked busy and selecting the one with the oldest update count. We set that render state to busy, then set the swap atom to false so that the render thread can select its render state when it wants.
+
+<code>			<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> render_state_t *render_state;
+			render_state = &amp;data-&gt;render_states[found];
+			render_state-&gt;busy = <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>;
+
+			*data-&gt;update_render_swap_state_atom = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
+
+			render_state-&gt;update_count = ++update_count;
+
+			<span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> i = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>; i &lt; BALL_COUNT; ++i) {
+				render_state-&gt;balls[i].x = data-&gt;balls[i].x;
+				render_state-&gt;balls[i].y = data-&gt;balls[i].y;
+			}
+
+			render_state-&gt;busy = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
+		}</code>
+Now we set the render state’s update count, then all this render state’s data. In the ball simulation that’s just the positions of the balls, but in a proper game this would include all sorts of object states. When the render state has been properly set up, we set its busy variable to false to make it available to be selected by the render thread.
+
+<code>		<span style="color:rgb(153, 153, 153); font-weight:400;">// Sleep until next frame</span>
+		QueryPerformanceCounter(&amp;ticks_now);
+		<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> int32_t sleep_time;
+		sleep_time = (<span style="color:rgb(240, 141, 73); font-weight:400;">1000</span>.f * ((ticks_last.QuadPart + ticks_per_frame) - ticks_now.QuadPart) / tick_rate.QuadPart) - <span style="color:rgb(240, 141, 73); font-weight:400;">2</span>;
+		printf(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Update sleep: %dms\n&quot;</span>, sleep_time);
+		<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(sleep_time &gt; <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>) Sleep(sleep_time);
+
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Micro-sleep the remaining time</span>
+		QueryPerformanceCounter(&amp;ticks_now);
+		<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(ticks_now.QuadPart - ticks_last.QuadPart &lt; ticks_per_frame) {
+			Sleep(<span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+			QueryPerformanceCounter(&amp;ticks_now);
+		}
+
+		ticks_last.QuadPart += ticks_per_frame;
+		<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(ticks_now.QuadPart - ticks_last.QuadPart &gt; ticks_per_frame) ticks_last = ticks_now;</code>
+Lastly the update thread performs some timing code to maintain a fixed update rate and allow the CPU to sleep between updates.
+
+That’s it for the update thread, now let’s look at the render thread.
+
+<code><span style="color:rgb(136, 174, 206); font-weight:400;">void</span> Render(<span style="color:rgb(136, 174, 206); font-weight:400;">void</span> *data_void) {
+	render_data_t *data = (render_data_t*)data_void;
+
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> uint16_t screen_refresh;
+	screen_refresh = GetDeviceCaps(CreateCompatibleDC(<span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>), VREFRESH);
+	printf(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Screen refresh rate: %d\n&quot;</span>, screen_refresh);
+
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> LARGE_INTEGER tick_rate, ticks_last, ticks_now;
+	<span style="color:rgb(240, 141, 73); font-weight:400;">static</span> uint64_t ticks_per_frame;
+	QueryPerformanceFrequency(&amp;tick_rate);
+	ticks_per_frame = tick_rate.QuadPart / screen_refresh; <span style="color:rgb(153, 153, 153); font-weight:400;">// Update rate = screen refresh rate</span>
+	QueryPerformanceCounter(&amp;ticks_last);
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> i = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>; i &lt; BALL_COUNT; ++i) {
+		data-&gt;ball_color[i] = rand32();
+	}</code>
+Can you guess what function is the render thread’s entry-point? Anyway, we do much of the same stuff – cast the data and set up timing variables. We retrieve the screen’s refresh rate to use the for the render thread’s rate. We also set the ball colours randomly.
+
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!*data-&gt;quit) {
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Wait until WM_PAINT message has been processed. Usually instant.</span>
+		UpdateWindow(*data-&gt;window_handle);
+
+		<span style="color:rgb(153, 153, 153); font-weight:400;">/**********************************************
+		 * Stateless rendering
+		 **********************************************/</span>
+
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Clear frame</span>
+		memset(data-&gt;frame-&gt;p, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, data-&gt;frame-&gt;w*data-&gt;frame-&gt;h*<span style="color:rgb(240, 141, 73); font-weight:400;">4</span>);</code>
+In the render loop, I’ll get back to that first line in a minute. We could perform any rendering here that doesn’t depend on the game state, which for now only means clearing the frame.
+
+We use the same state selection code we saw in Update.
+
+<code>		<span style="color:rgb(153, 153, 153); font-weight:400;">/**********************************************
+		 * State-based rendering
+		 **********************************************/</span>
+
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Draw balls</span>
+		<span style="color:rgb(136, 174, 206); font-weight:400;">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> i = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>; i &lt; BALL_COUNT; ++i) {
+			DrawCircle(data-&gt;frame, (<span style="color:rgb(136, 174, 206); font-weight:400;">int</span>)render_state-&gt;balls[i].x, (<span style="color:rgb(136, 174, 206); font-weight:400;">int</span>)render_state-&gt;balls[i].y, BALL_RADIUS-<span style="color:rgb(240, 141, 73); font-weight:400;">1</span>, data-&gt;ball_color[i]);
+		}
+
+		render_state-&gt;busy = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;</code>
+Here we perform all drawing that depends on the render state data. For my simulation that’s just drawing all the balls. We’re done reading this render state now so we set it to not busy.
+
+<code>		InvalidateRect(*data-&gt;window_handle, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">FALSE</span>);</code>
+Next we use InvalidateRect to mark the entire window as needing redrawing and add a WM_PAINT message to the message queue, which will be handled in Main’s message processing.
+
+We use the same timing code as Update to Sleep away any remaining time.
+
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!*data-&gt;quit) {
+		<span style="color:rgb(153, 153, 153); font-weight:400;">// Wait until WM_PAINT message has been processed. Usually instant.</span>
+		UpdateWindow(*data-&gt;window_handle);</code>
+At the start of each loop we use UpdateWindow to wait until the WM_PAINT message has been processed. That is expected to happen during the Render thread’s sleeping code but this extra line prevents us from overwriting the frame buffer before WM_PAINT has copied it to the screen. Alternatively you could swap between two buffers instead of ever waiting.
+
+And that’s the whole framework! I think this is pretty solid but I welcome any feedback you may have. The code is available to download at the top of this tutorial, and if you use the code I’d love to hear about what you make. I’ve been getting some really great e-mails from my previous tutorials, and I hope that showing the development of a whole game will result in many of you making something cool.
+
+In my next few tutorials I’ll show you how I’m building the game itself, including player controls and physics, and pixel-perfect collisions.
+
+<hr>
+If you've got questions about any of the code feel free to e-mail me or comment on the <a href="https://www.youtube.com/watch?v=1bAb1CfgZrs" target="_blank">youtube video</a>. I'll try to answer them, or someone else might come along and help you out. If you've got any extra tips about how this code can be better or just more useful info about the code, let me know so I can update the tutorial.
+
+Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
+
+Cheers.
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

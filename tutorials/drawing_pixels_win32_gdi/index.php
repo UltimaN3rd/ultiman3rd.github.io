@@ -30,7 +30,9 @@ Firstly, here's the code <a href="main.c" target="_blank">(or download here)</a>
 Note: Click any of the <a>hyperlinked words</a> to visit the MSDN documentation page for them.
 Note: I've dimmed all of the code not specific to the subject of the tutorial.
 
-<code><span class="fadecode">#include &lt;windows.h&gt;
+<code><span class="fadecode">#define UNICODE
+#define _UNICODE
+#include &lt;windows.h&gt;
 #include &lt;stdbool.h&gt;
 #include &lt;stdint.h&gt;
 
@@ -54,11 +56,11 @@ static bool quit = false;</span>
 <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <a href="https://docs.microsoft.com/en-us/windows/win32/gdi/device-contexts" target="_blank">HDC</a> frame_device_context = <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
 
 <span class="fadecode">int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow) {
-    const wchar_t window_class_name[] = L&lt;My Window Class&gt;;
+    const wchar_t window_class_name[] = L"My Window Class";
     static WNDCLASS window_class = { 0 };
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
-    window_class.lpszClassName = (PCSTR)window_class_name;
+    window_class.lpszClassName = window_class_name;
     RegisterClass(&window_class);</span>
 
     frame_bitmap_info.bmiHeader.biSize = <span style="color:rgb(136, 174, 206); font-weight:400;">sizeof</span>(frame_bitmap_info.bmiHeader);
@@ -68,7 +70,7 @@ static bool quit = false;</span>
     frame_device_context = <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createcompatibledc" target="_blank">CreateCompatibleDC</a>(<span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
 
 <span class="fadecode">    static HWND window_handle;
-    window_handle = CreateWindow((PCSTR)window_class_name, "Drawing Pixels", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+    window_handle = CreateWindow(window_class_name, L"Drawing Pixels", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                  640, 300, 640, 480, NULL, NULL, hInstance, NULL);
     if(window_handle == NULL) { return -1; }
 
@@ -113,7 +115,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message, WPARAM w
             frame_bitmap_info.bmiHeader.biHeight = <a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms632657(v=vs.85)" target="_blank">HIWORD</a>(lParam);
 
             <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(frame_bitmap) <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-deleteobject" target="_blank">DeleteObject</a>(frame_bitmap);
-            frame_bitmap = <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection" target="_blank">CreateDIBSection</a>(<span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, &amp;frame_bitmap_info, DIB_RGB_COLORS, &amp;frame.pixels, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+            frame_bitmap = <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection" target="_blank">CreateDIBSection</a>(<span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, &amp;frame_bitmap_info, DIB_RGB_COLORS, (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">void</span>**)&amp;frame.pixels, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
             <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-selectobject" target="_blank">SelectObject</a>(frame_device_context, frame_bitmap);
 
             frame.width =  <a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms632659(v=vs.85)" target="_blank">LOWORD</a>(lParam);
@@ -127,8 +129,10 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message, WPARAM w
     return 0;
 }</span></code>
 
-And here's the build script <a href="build.bat" target="_blank">(download here)</a>:
+Build with GCC:
+<code>gcc main.c -lgdi32</code>
 
+Or vc with this build script <a href="build.bat" target="_blank">(download here)</a>:
 <code>call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 cl main.c -Fe:a.exe user32.lib gdi32.lib
 pause</code>
@@ -156,9 +160,9 @@ Before the window is created we fill out the bitmap info header with information
             frame_bitmap_info.bmiHeader.biHeight = <a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms632657(v=vs.85)" target="_blank">HIWORD</a>(lParam);
 
             <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(frame_bitmap) <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-deleteobject" target="_blank">DeleteObject</a>(frame_bitmap);
-            frame_bitmap = <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection" target="_blank">CreateDIBSection</a>(<span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, &amp;frame_bitmap_info, DIB_RGB_COLORS, &amp;frame.pixels, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
+            frame_bitmap = <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-createdibsection" target="_blank">CreateDIBSection</a>(<span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, &amp;frame_bitmap_info, DIB_RGB_COLORS, (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">void</span>**)&amp;frame.pixels, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>);
             <a href="https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-selectobject" target="_blank">SelectObject</a>(frame_device_context, frame_bitmap);</code>
-When a window is created it will actually process several messages before letting our program continue; that is to say it’ll both receive and process messages before we ever call “PeekMessage” and “DispatchMessage”. One message which is always processed once when the window is created is <a href="https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size" target="_blank">WM_SIZE</a>. This message will also be given to us whenever the window is resized, so it’s the one ideal place to assign the size of our pixel array and finish setting up our GDI bitmap.
+When a window is created it will actually process several messages before letting our program continue; that is to say it’ll both receive and process messages before we ever call “PeekMessage” and “DispatchMessage”. One message which is always processed once when the window is created with the WS_VISIBLE flag is <a href="https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-size" target="_blank">WM_SIZE</a>. This message will also be given to us whenever the window is resized, so it’s the one ideal place to assign the size of our pixel array and finish setting up our GDI bitmap.
 
 We get the width and height of the window from the “lParam” passed in with the message. If our bitmap object was already created, we delete it, then create a new bitmap with the unchanged info from before and the new width and height. DIB_RGB_COLORS just tells CreateDIBSection what kind of data we’re using, and we pass a pointer to our pixel array pointer. CreateDIBSection will fill our pixel array pointer with an address to some memory big enough to hold the type and quantity of pixels we want, based on the width, height and bits per pixel.
 

@@ -40,7 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	if(waveOutSetVolume(wave_out, 0xFFFF) != MMSYSERR_NOERROR) {
+	if(waveOutSetVolume(wave_out, 0xFFFFFFFF) != MMSYSERR_NOERROR) {
 		PRINT_ERROR("waveOutGetVolume failed\n");
 		return -1;
 	}

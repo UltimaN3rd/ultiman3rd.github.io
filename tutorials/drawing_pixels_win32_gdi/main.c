@@ -1,3 +1,5 @@
+#define UNICODE
+#define _UNICODE
 #include <windows.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -26,7 +28,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
     static WNDCLASS window_class = { 0 };
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
-    window_class.lpszClassName = (PCSTR)window_class_name;
+    window_class.lpszClassName = window_class_name;
     RegisterClass(&window_class);
     
     frame_bitmap_info.bmiHeader.biSize = sizeof(frame_bitmap_info.bmiHeader);
@@ -36,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
     frame_device_context = CreateCompatibleDC(0);
     
     static HWND window_handle;
-    window_handle = CreateWindow((PCSTR)window_class_name, "Drawing Pixels", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+    window_handle = CreateWindow(window_class_name, L"Drawing Pixels", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
                                  640, 300, 640, 480, NULL, NULL, hInstance, NULL);
     if(window_handle == NULL) { return -1; }
     
@@ -81,7 +83,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message, WPARAM w
             frame_bitmap_info.bmiHeader.biHeight = HIWORD(lParam);
             
             if(frame_bitmap) DeleteObject(frame_bitmap);
-            frame_bitmap = CreateDIBSection(NULL, &frame_bitmap_info, DIB_RGB_COLORS, &frame.pixels, 0, 0);
+            frame_bitmap = CreateDIBSection(NULL, &frame_bitmap_info, DIB_RGB_COLORS, (void**)&frame.pixels, 0, 0);
             SelectObject(frame_device_context, frame_bitmap);
             
             frame.width =  LOWORD(lParam);

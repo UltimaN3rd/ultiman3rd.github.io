@@ -24,7 +24,7 @@
   3D platformer<br/><br/>
   Macbat 64 is a glorious love-letter to the late 90s which I couldn't help but fall in love with! Marcus Horn has exactly the kind of craftsmanship and care required to bring the best of my favourite childhood games to modern computers. Check out Macbat 64 and SIACTRO's other great games!<br/><br/>
   <a href="https://siactro.itch.io/macbat64" target="_blank">Macbat 64 on Itch.io</a><br/>
-  <a href="https://marcushorn.carbonmade.com/" target="_blank">More by SIACTRO</a>
+  <a href="https://siactro.itch.io/" target="_blank">More by SIACTRO</a>
 </article>
 
 <article class="game">
@@ -95,14 +95,14 @@
 </article>
 
 <article class="game">
-  <a href="http://www.karoshigame.com/" target="_blank"><img class="thumbnail" src="/recommendations/maze95/karoshi.png" alt="Karoshi"/></a>
+  <a href="https://tig.fandom.com/wiki/Karoshi" target="_blank"><img class="thumbnail" src="/recommendations/maze95/karoshi.png" alt="Karoshi"/></a>
   <h3>Karoshi</h3>
   By Jesse Venbrux<br/>
   Free<br/>
   2d puzzle platformer<br/><br/>
   The classic game where you win by dying! There are now 6 games in the series and they're brilliant so give them a go and see if you can figure out how to turn Mr. Karoshi into a pile of blood in each level :)<br/><br/>
-  <a href="http://www.karoshigame.com/" target="_blank">All Karoshi games</a><br/>
-  <a href="http://www.venbrux.com/" target="_blank">More Jesse Venbrux games</a>
+  <a href="https://tig.fandom.com/wiki/Karoshi" target="_blank">All Karoshi games</a><br/>
+  <a href="https://venbrux.blogspot.com/" target="_blank">More Jesse Venbrux games</a>
 </article>
 
 <article class="game">

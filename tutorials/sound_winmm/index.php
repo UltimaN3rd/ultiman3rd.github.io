@@ -70,7 +70,7 @@ HWAVEOUT wave_out;
 		}
 	}
 
-	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(<a href="https://docs.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutsetvolume" target="_blank">waveOutSetVolume</a>(wave_out, <span style="color:rgb(240, 141, 73); font-weight:400;">0xFFFF</span>) != MMSYSERR_NOERROR) {
+	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(<a href="https://docs.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutsetvolume" target="_blank">waveOutSetVolume</a>(wave_out, <span style="color:rgb(240, 141, 73); font-weight:400;">0xFFFFFFFF</span>) != MMSYSERR_NOERROR) {
 		<span style="color:rgb(240, 141, 73); font-weight:400;">PRINT_ERROR</span>(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;waveOutGetVolume failed\n&quot;</span>);
 		<span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
 	}
@@ -171,11 +171,11 @@ We calculate nBlockAlign, which is how many bytes each sample requires, and the 
 		}</code>
 We pass waveOutOpen a pointer to our waveout handle to fill. The second argument is the ID of the sound device we want to use; WAVE_MAPPER selects the default device. We pass our wave format, a pointer to our waveout callback function, and a flag to tell it that we’re using a callback function. Using a callback function means that whenever something happens on the waveout device, our program will be interrupted by a call to the specified function to handle whatever happened, such as finishing playing a sound data chunk. There are 3 other options but a callback function is simple and effective. In a performance-intensive program, a separate thread can be used to handle audio without interrupting the program.
 
-<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(<a href="https://docs.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutsetvolume" target="_blank">waveOutSetVolume</a>(wave_out, <span style="color:rgb(240, 141, 73); font-weight:400;">0xFFFF</span>) != MMSYSERR_NOERROR) {
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(<a href="https://docs.microsoft.com/en-us/windows/win32/api/mmeapi/nf-mmeapi-waveoutsetvolume" target="_blank">waveOutSetVolume</a>(wave_out, <span style="color:rgb(240, 141, 73); font-weight:400;">0xFFFFFFFF</span>) != MMSYSERR_NOERROR) {
 		<span style="color:rgb(240, 141, 73); font-weight:400;">PRINT_ERROR</span>(<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;waveOutGetVolume failed\n&quot;</span>);
 		<span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>;
 	}</code>
-Setting the volume here sets the internal wave device volume. We want our audio to be sent along to the speaker driver without decreasing, then the user can adjust their speaker volume either through Windows audio controls or with their physical speaker controls.
+Setting the volume here sets the internal wave device volume. We want our audio to be sent along to the speaker driver without decreasing, then the user can adjust their speaker volume either through Windows audio controls or with their physical speaker controls. The volume value is 4 bytes, or 2 words. Each word sets the volume from 0-&gtFFFF of the left or right channel, with the low word for left and high word for right.
 
 <code>	wave_step = TWOPI / ((<span style="color:rgb(136, 174, 206); font-weight:400;">float</span>)SAMPLING_RATE / frequency);
 

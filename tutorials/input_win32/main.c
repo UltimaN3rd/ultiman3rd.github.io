@@ -1,3 +1,5 @@
+#define UNICODE
+#define _UNICODE
 #include <windows.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -37,7 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	static WNDCLASS window_class = { 0 };
 	window_class.lpfnWndProc = WindowProcessMessage;
 	window_class.hInstance = hInstance;
-	window_class.lpszClassName = (PCSTR)window_class_name;
+	window_class.lpszClassName = window_class_name;
 	RegisterClass(&window_class);
 
 	bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
@@ -46,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
 	bitmap_info.bmiHeader.biCompression = BI_RGB;
 	bitmap_device_context = CreateCompatibleDC(0);
 
-	window_handle = CreateWindow((PCSTR)window_class_name, "Learn to Program Windows", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	window_handle = CreateWindow(window_class_name, L"Learn to Program Windows", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 	if(window_handle == NULL) {
 		PRINT_ERROR("CreateWindow() failed. Returned NULL.\n");
 		return -1;

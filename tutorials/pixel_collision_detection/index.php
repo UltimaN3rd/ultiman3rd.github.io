@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<!-- Code syntax highlighting generated using codebeautify.org/code-highlighter with the "Stackoverflow Dark" style. -->
+
+<head>
+  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
+  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
+  <?php include "head_common.html" ?>
+  <link rel="stylesheet" href="/blog/blog.css" />
+  <link rel="stylesheet" href="/tutorials/tutorial.css" />
+  <?php include "/blog/bloghead.html" ?>
+</head>
+
+<?php include "header_common.html" ?>
+
+<body>
+
+<article>
+
+<h4>Pixel-Perfect Collision Detection in C</h4>
+
+<img src="videos/red.gif">
+
+This tutorial is also available as a <a href="https://www.youtube.com/watch?v=9pnEBa4cy5w" target="_blank">video.</a>
+
+In this tutorial I’ll show you how to detect collisions on a per-pixel basis. Collision <b>response</b> is unique to each game, so I’ll save that for my next tutorial where I’ll demonstrate player movement and collisions in my 2d platformer.
+
+Download the code here: <a href="pixel collision detection.zip" download>pixel collision detection.zip</a> Build on Windows with build.bat, or Linux with build.sh. This creates the binary a.exe or a.out, respectively.
+
+Note: This code is written using my WIP osinterface library, which lets it compile and run on Windows and Linux (I don't own a Mac yet). Feedback on osinterface is welcome.
+
+main.c
+<code><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&lt;stdlib.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&lt;stdio.h&gt;</span></span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> OSINTERFACE_LINUX_USE_OPENGL</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> OSINTERFACE_FRAME_BUFFER_SCALED</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;osinterface.h&quot;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;PRINT_ERROR.h&quot;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;loadbmp.h&quot;</span></span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> RESOLUTIONX 160</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> RESOLUTIONY 90</span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> ABS(a) ((a) &lt; 0 ? -(a) : (a))</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> FLOOR(a) ((a) &lt; 0 ? (int)((a)-1.0) : (int)(a))</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> MAX(a, b) ((a) &gt; (b) ? (a) : (b))</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> MIN(a, b) ((a) &lt; (b) ? (a) : (b))</span>
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">struct</span> {</span>
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span>
+        <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">struct</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">uint8_t</span> b, g, r, a; };
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">uint32_t</span> u32;
+    };
+} <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">pixel_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">struct</span> {</span>
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> w, width; };
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> h, height; };
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">pixel_t</span> *p, *pixels; };
+} <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">typedef</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">struct</span> {</span>
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> w, width; };
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> h, height; };
+    <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">union</span> {</span> <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> *p, *pixels; };
+} <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span>;
+
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> frame_buffer;
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CheckCollision</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> a, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ax, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ay, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> b, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bx, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> by)</span></span>;
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">void</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">HighlightCollisions</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> a, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ax, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ay, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> b, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bx, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> by)</span></span>;
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CollisionMaskFromSprite</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> *mask, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *sprite)</span></span>;
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">void</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">BlitAlpha10</span><span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *source, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *destination, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y)</span></span>;
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">main</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> argc, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">char</span> **argv)</span> </span>{
+    frame_buffer.width = RESOLUTIONX;
+    frame_buffer.height = RESOLUTIONY;
+    frame_buffer.pixels = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">malloc</span> (frame_buffer.width * frame_buffer.height * <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sizeof</span></span> (frame_buffer.pixels[<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>]));
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_SetWindowFrameBuffer</span> ((<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">uint32_t</span>*)frame_buffer.pixels, frame_buffer.width, frame_buffer.height);
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">EXIT_IF</span> (!<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_Init</span> (<span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;Pixel collision detection&quot;</span>), <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>);
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> potato, croaking_kero;
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">EXIT_IF</span> (!<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">LoadBMP</span> (&amp;potato.w, &amp;potato.h, (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">uint32_t</span>**)&amp;potato.p, <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;potato.bmp&quot;</span>), <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>);
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">EXIT_IF</span> (!<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">LoadBMP</span> (&amp;croaking_kero.w, &amp;croaking_kero.h, (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">uint32_t</span>**)&amp;croaking_kero.p, <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;croakingkero.bmp&quot;</span>), <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>);
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> kerox = (frame_buffer.w - croaking_kero.w) / <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> keroy = (frame_buffer.h - croaking_kero.h) / <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>;
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> mask_potato, mask_kero;
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">EXIT_IF</span> (!<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CollisionMaskFromSprite</span> (&amp;mask_potato, &amp;potato), <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>);
+    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">EXIT_IF</span> (!<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CollisionMaskFromSprite</span> (&amp;mask_kero, &amp;croaking_kero), <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>);
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> quit = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span> (!quit) {
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">os_event_t</span> event;
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">do</span> {
+            event = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_NextEvent</span> ();
+            <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">switch</span></span> (event.type) {
+
+                <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> os_EVENT_KEY_PRESS: {
+                    <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">switch</span></span> (event.key) {
+                        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> os_KEY_ESCAPE: {
+                            quit = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+                        } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+
+						<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> os_KEY_ENTER: {
+							<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (os_public.keyboard[os_KEY_LALT] || os_public.keyboard[os_KEY_RALT]) {
+								<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_Fullscreen</span> (!os_public.window.is_fullscreen);
+							}
+						} <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+
+                        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">default</span>: <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+                    }
+                } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+
+                <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> os_EVENT_QUIT: {
+                    quit = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+                } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+
+                <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">default</span>: <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
+            }
+        } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span> (event.type != os_EVENT_NULL);
+
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">memset</span> (frame_buffer.pixels, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">80</span>, frame_buffer.width * frame_buffer.height * <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sizeof</span></span> (frame_buffer.pixels[<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>]));
+
+        os_vec2i mouse;
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_WindowPositionToScaledFrameBufferPosition</span> (os_public.mouse.p.x, os_public.mouse.p.y, &amp;mouse.x, &amp;mouse.y);
+        mouse.x -= potato.w/<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>;
+        mouse.y -= potato.h/<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">2</span>;
+
+        mouse.x = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (frame_buffer.width - potato.w, mouse.x));
+        mouse.y = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (frame_buffer.height - potato.h, mouse.y));
+
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">BlitAlpha10</span> (&amp;croaking_kero, &amp;frame_buffer, kerox, keroy);
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">BlitAlpha10</span> (&amp;potato, &amp;frame_buffer, mouse.x, mouse.y);
+
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">HighlightCollisions</span> (mask_potato, mouse.x, mouse.y, mask_kero, kerox, keroy);
+
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_DrawScreen</span> ();
+
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">os_WaitForScreenRefresh</span> ();
+    }
+}
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CheckCollision</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> a, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ax, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ay, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> b, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bx, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> by)</span> </span>{
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> aleft, aright, abottom, atop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bleft, bright, bbottom, btop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> left, right, bottom, top;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> columns, rows;
+
+	aleft = ax; aright = aleft + a.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	abottom = ay; atop = abottom + a.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	bleft = bx; bright = bleft + b.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	bbottom = by; btop = bbottom + b.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (aleft &gt; bright || aright &lt; bleft || abottom &gt; btop || atop &lt; bbottom)
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>; <span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Collision box areas do not overlap</span>
+
+	<span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Bounding box of overlap of two masks</span>
+	left = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (aleft, bleft);
+	right = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (aright, bright);
+	bottom = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (abottom, bbottom);
+	top = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (atop, btop);
+	columns = right - left + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+	rows = top - bottom + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+
+	aleft = left - aleft;
+	abottom = bottom - abottom;
+
+	bleft = left - bleft;
+	bbottom = bottom - bbottom;
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; y &lt; rows; ++y) {
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; x &lt; columns; ++x) {
+			<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (a.p[(aleft + x) + (abottom + y) * a.w] &amp;&amp;
+				b.p[(bleft + x) + (bbottom + y) * b.w])
+				<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+		}
+	}
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
+}
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">void</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">HighlightCollisions</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> a, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ax, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ay, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> b, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bx, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> by)</span> </span>{
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> aleft, aright, abottom, atop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bleft, bright, bbottom, btop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> left, right, bottom, top;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> columns, rows;
+
+	aleft = ax; aright = aleft + a.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	abottom = ay; atop = abottom + a.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	bleft = bx; bright = bleft + b.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	bbottom = by; btop = bbottom + b.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (aleft &gt; bright || aright &lt; bleft || abottom &gt; btop || atop &lt; bbottom)
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span>; <span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Collision box areas do not overlap</span>
+
+	<span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Bounding box of overlap of two masks</span>
+	left = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (aleft, bleft);
+	right = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (aright, bright);
+	bottom = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (abottom, bbottom);
+	top = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (atop, btop);
+	columns = right - left + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+	rows = top - bottom + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+
+	aleft = left - aleft;
+	abottom = bottom - abottom;
+
+	bleft = left - bleft;
+	bbottom = bottom - bbottom;
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; y &lt; rows; ++y) {
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; x &lt; columns; ++x) {
+			<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (a.p[(aleft + x) + (abottom + y) * a.w] &amp;&amp;
+				b.p[(bleft + x) + (bbottom + y) * b.w])
+                frame_buffer.p[(bx + bleft + x) + (by + bbottom + y) * frame_buffer.w].u32 = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0xffff0000</span>;
+		}
+	}
+}
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CollisionMaskFromSprite</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> *mask, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *sprite)</span> </span>{
+    mask-&gt;w = sprite-&gt;w;
+    mask-&gt;h = sprite-&gt;h;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> total = mask-&gt;w * mask-&gt;h;
+    mask-&gt;p = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">malloc</span> (total);
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (!mask-&gt;p) {
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">PRINT_ERROR</span> (<span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;Failed to allocate mask memory&quot;</span>);
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
+    }
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> *m = mask-&gt;p;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">pixel_t</span> *s = sprite-&gt;p;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span> (total--) {
+        *m = s-&gt;a == <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span> ? <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span> : <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+        ++m; ++s;
+    }
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+}
+
+<span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">void</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">BlitAlpha10</span><span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *source, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *destination, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y)</span> </span>{
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> left, right, bottom, top;
+	left    = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, x);
+	right   = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (destination-&gt;w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>, x+source-&gt;w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>);
+	bottom  = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, y);
+	top     = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (destination-&gt;h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>, y+source-&gt;h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>);
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y2 = bottom; y2 &lt;= top; ++y2) {
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span>(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x2 = left; x2 &lt;= right; ++x2) {
+			<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">pixel_t</span> source_pixel = source-&gt;p[x2-x + (y2-y)*source-&gt;w];
+			<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (source_pixel.a != <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>)
+				destination-&gt;p[x2 + y2*destination-&gt;w] = source_pixel;
+		}
+	}
+}</code>
+
+<hr>
+<h4><a id="Code Walkthrough" style="color:rgb(255,255,255);">Code Walkthrough</a></h4>
+
+<!--<video autoplay muted loop><source src="videos/makemask.mp4" type="video/mp4"></video>-->
+<img src="videos/makemask.gif">
+
+When checking for collision between two sprites, the colour information doesn’t matter, so we can create a collision mask representing each sprite which stores a 0 for empty pixels and a 1 for solid. This also gives us flexibility to make parts of a sprite non-colliding by editing the mask. Here’s a simple function that loops through a sprite’s pixels and creates a mask based on it.
+
+<code><span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CollisionMaskFromSprite</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> *mask, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">sprite_t</span> *sprite)</span> </span>{
+    mask-&gt;w = sprite-&gt;w;
+    mask-&gt;h = sprite-&gt;h;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> total = mask-&gt;w * mask-&gt;h;
+    mask-&gt;p = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">malloc</span> (total);
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (!mask-&gt;p) {
+        <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">PRINT_ERROR</span> (<span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;Failed to allocate mask memory&quot;</span>);
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
+    }
+
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> *m = mask-&gt;p;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">pixel_t</span> *s = sprite-&gt;p;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span> (total--) {
+        *m = s-&gt;a == <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span> ? <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span> : <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+        ++m; ++s;
+    }
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+}</code>
+So we copy the width and height of the sprite and allocate the appropriate number of bytes for the mask. Then we create a pointer to the first pixel in the sprite and the first bool in the mask. We iterate a number of times equal to the total number of pixels, checking the alpha component of the sprite pixel to determine whether the corresponding mask pixel should be solid. Then we increment both pointers.
+
+Throughout this tutorial I'll show some animations which display sprites, but are using masks for the collision checking itself.
+
+<img src="videos/just_sprites.gif">
+Let's take two sprites (with masks): the Croaking Kero logo, and a potato. We need to find the area where the masks overlap, if any, then loop through the corresponding pixels in each mask and check whether they have any solid pixels in the same spot.
+
+This CheckCollision function takes two masks, a and b, and their positions, then returns true when the masks collide and false otherwise.
+<code><span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);"><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CheckCollision</span> <span style="color:rgb(255, 255, 255); font-weight:400;background:rgba(0, 0, 0, 0);">(<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> a, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ax, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> ay, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">collision_mask_t</span> b, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bx, <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> by)</span> </span>{
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> aleft, aright, abottom, atop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> bleft, bright, bbottom, btop;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> left, right, bottom, top;
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> columns, rows;
+
+	aleft = ax; aright = aleft + a.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	abottom = ay; atop = abottom + a.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	bleft = bx; bright = bleft + b.w<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+	bbottom = by; btop = bbottom + b.h<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>;
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (aleft &gt; bright || aright &lt; bleft || abottom &gt; btop || atop &lt; bbottom)
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>; <span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Collision box areas do not overlap</span></code>
+We get the left and right pixel columns, and bottom and top rows of each mask. We can check if a’s left is right of b’s right, a’s bottom is above b’s top and so on and if any of these conditions are true, there’s no overlap and we can early out.
+
+<img src="images/no_overlap.png">
+
+
+
+<code>	<span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Bounding box of overlap of two masks</span>
+	left = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (aleft, bleft);
+	right = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (aright, bright);
+	bottom = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MAX</span> (abottom, bbottom);
+	top = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">MIN</span> (atop, btop);
+	columns = right - left + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;
+	rows = top - bottom + <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">1</span>;</code>
+If there is an overlap, we find that box by taking the rightmost of a’s and b’s lefts, the leftmost of their rights, and so on. The number of pixel columns is equal to the right minus left + 1, and similar for rows.
+
+<img src="images/overlap.png">
+
+
+
+<code>	aleft = left - aleft;
+	abottom = bottom - abottom;
+
+	bleft = left - bleft;
+	bbottom = bottom - bbottom;</code>
+We know how many rows and columns of the masks will be checked, but we need to translate the overlap position to corresponding starting points within each of the masks’ pixels. We do that by subtracting a’s left position from the overlap’s left, and a’s bottom position from the overlap’s bottom. The same for b.
+
+<code>	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> y = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; y &lt; rows; ++y) {
+		<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">for</span> (<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> x = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>; x &lt; columns; ++x) {
+			<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span> (a.p[(aleft + x) + (abottom + y) * a.w] &amp;&amp;
+				b.p[(bleft + x) + (bbottom + y) * b.w])
+				<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+		}
+	}
+
+	<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
+}</code>
+Now we iterate through the number of rows and columns, comparing the pixel at aleft + x, abottom + y and bleft + x, bbottom + y. If they’re both solid we have a collision, so we return true. If we make it through every overlapping pixel without finding two solids in the same place, we reach the end of the function and return false.
+
+<img src="videos/check_pixels.gif">
+
+This is the most basic pixel collision detection, but from here you can make loads of custom collision functions. Perhaps you want to create a collision mask which stores all the overlapping pixels, or maybe you want to go through each row, checking the left- and right-most colliding pixels to determine the minimum horizontal movement needed to stop your masks from colliding. The combination of collision detection and response can be tailored to the needs of each game, and in my next tutorial I'll show you how I'm handling player movement and collisions in a 2D platformer.
+
+<hr>
+If you've got questions about any of the code feel free to e-mail me or comment on the <a href="https://www.youtube.com/watch?v=9pnEBa4cy5w" target="_blank">youtube video</a>. I'll try to answer them, or someone else might come along and help you out. If you've got any extra tips about how this code can be better or just more useful info about the code, let me know so I can update the tutorial.
+
+Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
+
+Cheers.
+
+</article>
+
+</body>
+
+<?php include "/blog/blogbottom.html" ?>
+
+<?php include "footer_common.html" ?>
+
+</html>

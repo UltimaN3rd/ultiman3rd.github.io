@@ -29,55 +29,61 @@ In this tutorial I'll show you how to open a window with the Windows native libr
 Firstly, here's the code <a href="main.c" target="_blank">(or download here)</a>:
 NOTE: Click any of the <a>hyperlinked words</a> to visit the MSDN documentation page for them.
 
-<code><span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;windows.h&gt;</span></span>
-<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdbool.h&gt;</span></span>
+<code><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> UNICODE</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> _UNICODE</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&lt;windows.h&gt;</span></span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&lt;stdbool.h&gt;</span></span>
 
-<span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> quit = <span style="color:rgb(240, 141, 73); font-weight:400;">false</span>;
+<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">bool</span> quit = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">false</span>;
 
-LRESULT <span style="color:rgb(240, 141, 73); font-weight:400;">CALLBACK</span> WindowProcessMessage(HWND, <span style="color:rgb(240, 141, 73); font-weight:400;">UINT</span>, WPARAM, LPARAM);
+LRESULT <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CALLBACK</span> WindowProcessMessage(HWND, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">UINT</span>, WPARAM, LPARAM);
 
-<span style="color:rgb(136, 174, 206); font-weight:400;">int</span> WINAPI <a href="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-winmain" target="_blank">WinMain</a>(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, <span style="color:rgb(136, 174, 206); font-weight:400;">int</span> nCmdShow) {
-    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-wndclassa" target="_blank">WNDCLASS</a> window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
-    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">const</span> <span style="color:rgb(136, 174, 206); font-weight:400;">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;My Window Class&quot;</span>;
-    window_class.lpszClassName = (PCSTR)window_class_name;
+<span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">int</span> nCmdShow) {
+    WNDCLASS window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span> };
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">const</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;My Window Class&quot;</span>;
+    window_class.lpszClassName = window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
     
-    <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerclassa" target="_blank">RegisterClass</a>(&amp;window_class);
+    RegisterClass(&amp;window_class);
     
-    HWND window_handle = <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowa" target="_blank">CreateWindow</a>((PCSTR)window_class_name, <span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Learn to Program Windows&quot;</span>, <a href="https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles" target="_blank">WS_OVERLAPPEDWINDOW</a>, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>);
-    <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(window_handle == <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>) { <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>; }
+    HWND window_handle = CreateWindow(window_class_name, L<span style="color:rgb(181, 189, 104); font-weight:400;background:rgba(0, 0, 0, 0);">&quot;Learn to Program Windows&quot;</span>, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">NULL</span>);
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">if</span>(window_handle == <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">NULL</span>) { <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">-1</span>; }
     
-    <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow" target="_blank">ShowWindow</a>(window_handle, nCmdShow);
+    ShowWindow(window_handle, nCmdShow);
     
-    <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!quit) {
-        <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-msg" target="_blank">MSG</a> message;
-        <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(<a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-peekmessagea" target="_blank">PeekMessage</a>(&amp;message, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, PM_REMOVE)) {
-            <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-translatemessage" target="_blank">TranslateMessage</a>(&amp;message);
-            <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-dispatchmessage" target="_blank">DispatchMessage</a>(&amp;message);
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span>(!quit) {
+        MSG message;
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">while</span>(PeekMessage(&amp;message, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>, PM_REMOVE)) {
+            TranslateMessage(&amp;message);
+            DispatchMessage(&amp;message);
         }
         
-        <span style="color:rgb(153, 153, 153); font-weight:400;">// Do game stuff here</span>
+        <span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Do game stuff here</span>
     }
     
-    <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>;
 }
 
-LRESULT <span style="color:rgb(240, 141, 73); font-weight:400;">CALLBACK</span> WindowProcessMessage(HWND window_handle, <span style="color:rgb(240, 141, 73); font-weight:400;">UINT</span> message, WPARAM wParam, LPARAM lParam) {
-    <span style="color:rgb(136, 174, 206); font-weight:400;">switch</span>(message) {
-        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> <a href="https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-quit" target="_blank">WM_QUIT</a>:
-        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> <a href="https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-destroy" target="_blank">WM_DESTROY</a>: {
-            quit = <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>;
-        } <span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+LRESULT <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">CALLBACK</span> WindowProcessMessage(HWND window_handle, <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">UINT</span> message, WPARAM wParam, LPARAM lParam) {
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">switch</span>(message) {
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> WM_QUIT:
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">case</span> WM_DESTROY: {
+            quit = <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">true</span>;
+        } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
         
-        <span style="color:rgb(136, 174, 206); font-weight:400;">default</span>: { <span style="color:rgb(153, 153, 153); font-weight:400;">// Message not handled; pass on to default message handling function</span>
-            <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <a href="https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-defwindowproca" target="_blank">DefWindowProc</a>(window_handle, message, wParam, lParam);
-        } <span style="color:rgb(136, 174, 206); font-weight:400;">break</span>;
+        <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">default</span>: { <span style="color:rgb(153, 153, 153); font-weight:400;background:rgba(0, 0, 0, 0);">// Message not handled; pass on to default message handling function</span>
+            <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> DefWindowProc(window_handle, message, wParam, lParam);
+        } <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">break</span>;
     }
-    <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>;
+    <span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0, 0, 0, 0);">0</span>;
 }</code>
 
-And here's the build script <a href="build.bat" target="_blank">(download here)</a>:
+You can build with GCC:
+
+<code>gcc main.c</code>
+
+Or here's a build script using vc <a href="build.bat" target="_blank">(download here)</a>:
 
 <code>call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
 cl main.c user32.lib
@@ -87,31 +93,33 @@ You may need to edit the directory in the first line, or run "Developer Powershe
 <hr>
 <h4><a id="Code Walkthrough" style="color:rgb(255,255,255);">Code Walkthrough</a></h4>
 
-<code><span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;windows.h&gt;</span></span>
+<code>><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> UNICODE</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> _UNICODE</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;windows.h&gt;</span></span>
 <span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;stdbool.h&gt;</span></span></code>
-Everything we need is in “windows.h”. I’ve also included “stdbool” for the “true” and “false” macros.
+Everything we need is in “windows.h”. I’ve also included “stdbool” for the “true” and “false” macros. Regarding those definitions of UNICODE and _UNICODE, more explanation is in the deep dive. For now, the Win32 API doesn't use regular old char* strings, but wchar_t* strings instead. Each character is 2 bytes instead of one and supports many languages and symbols. Strings with a leading L before the quote, like L"Hello world" are wide character strings.
 
 <code><span style="color:rgb(136, 174, 206); font-weight:400;">int</span> WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, <span style="color:rgb(136, 174, 206); font-weight:400;">int</span> nCmdShow) {</code>
 Win32 defines its own main() function entry-point and handles some behind-the-scenes Windows setup, then calls “WinMain” which we can treat as the new entry-point for our program.
 
-<code>    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> WNDCLASS window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
-    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">const</span> <span style="color:rgb(136, 174, 206); font-weight:400;">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;My Window Class&quot;</span>;
-    window_class.lpszClassName = (PCSTR)window_class_name;
+<code>    WNDCLASS window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
+    <span style="color:rgb(136, 174, 206); font-weight:400;">const</span> <span style="color:rgb(136, 174, 206); font-weight:400;">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;My Window Class&quot;</span>;
+    window_class.lpszClassName = window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
     
     RegisterClass(&amp;window_class);
     
-    HWND window_handle = CreateWindow((PCSTR)window_class_name, <span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Learn to Program Windows&quot;</span>, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>);
+    HWND window_handle = CreateWindow(window_class_name, L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Learn to Program Windows&quot;</span>, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>);
     <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(window_handle == <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>) { <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>; }</code>
 We create a window class to hold information about the window. The name is used to reference our class later. “lpfnWndProc” is a pointer to a function Windows will call in order to handle events, or as Windows calls them, messages. We “Register” the class with Windows, then create a window based on it.
-The name identifies our window class. We give our window a title, and tell Windows what kind of window to create with a “window style”. WS_OVERLAPPEDWINDOW combines the usual border, title bar and so on. The next 4 arguments are the x and y coordinates of the top-left of our window, then the width and height. With an “overlapped” window you can let Windows decide these values with CW_USEDEFAULT. We check the function was successful then contiue.
+The name identifies our window class. We give our window a title, and tell Windows what kind of window to create with a “window style”. WS_OVERLAPPEDWINDOW combines the usual border, title bar and so on. The next 4 arguments are the x and y coordinates of the top-left of our window, then the width and height. With an “overlapped” window you can let Windows decide these values with CW_USEDEFAULT. We check the function was successful then continue.
 
 <code>    ShowWindow(window_handle, nCmdShow);</code>
 ShowWindow makes our window finally appear. nCmdShow tells Windows whether our program was launched with some specific settings such as “maximized” or “minimized” which could be set through a program shortcut.
 
 <code>    <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!quit) {
-        <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> MSG message;
+        MSG message;
         <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(PeekMessage(&amp;message, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, PM_REMOVE)) {
             TranslateMessage(&amp;message);
             DispatchMessage(&amp;message);
@@ -136,12 +144,20 @@ We have a global boolean variable we can use to exit our main program loop, then
 }</code>
 We switch on the message; if it’s a QUIT or DESTROY message we set our quit variable to true so that our program will exit, otherwise we pass the message on to Windows’ “default window procedure”.
 
+<code>gcc main.c</code>
+Compiling with GCC is as simple as it gets.
+
 <code>cl main.c user32.lib</code>
-To compile we need to link to user32.lib which contains implementations for the Win32 functions in the code.
+To compile with vc we need to link to user32.lib which contains implementations for the Win32 functions in the code.
 
 With this code our program window will stay open and responsive until we hit the X button, alt+F4 or end task from task manager, at which point it will gracefully close.
 <hr>
 <h4><a id="Deep Dive" style="color:rgb(255,255,255);">Deep Dive</a></h4>
+
+<code><span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> UNICODE</span>
+<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">#<span style="color:rgb(136, 174, 206); font-weight:400;background:rgba(0, 0, 0, 0);">define</span> _UNICODE</span></code>
+Originally the Win32 library used standard ANSI C strings - one byte per character. In Windows NT, in order to support more languages (I'm talking about Chinese and such, not programming languages) Microsoft switched to "wide character" strings, where each character is 2 bytes. If you ignore this and use ANSI encoding, some functions will be unavailable, and every function that uses a string will convert it to unicode under the hood. Therefore it's better to embrace the unicode strings, which you let Win32 know by #defining UNICODE and _UNICODE before #including windows.h. You could alternatively define them in your build script. The end result of all this is that our strings need a big L before the first " mark, and our char* variables become wchar_t* instead.
+Thanks to starcow for getting me to look into this issue properly.
 
 <code><span style="color:rgb(136, 174, 206); font-weight:400;">#<span style="color:rgb(136, 174, 206); font-weight:400;">include</span> <span style="color:rgb(181, 189, 104); font-weight:400;">&lt;windows.h&gt;</span></span></code>
 In the first line it may seem heavy-handed to #include <b>all</b> of "windows.h" rather than just the few files with the functions we need, but you'll find by looking through the Win32 headers that they often #include "windows.h" themselves so we leave it to the compiler to trim the fat.
@@ -158,12 +174,11 @@ nCmdShow holds information about whether to minimize or maximize the window and 
 wWinMain also exists with the same function signature. The only difference is for pCmdLine. In WinMain it's passed as an ANSI string and wWinMain uses Unicode. If you use WinMain you can still retrieve the ANSI string using the GetCommandLine function.
 WinMain must have these specific variable types, but the names can be whatever you want. You may want to change the names to fit your variable naming conventions, or rename hPrevInstance to NULLInstance since it's always NULL.
 
-<code>    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> WNDCLASS window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
-    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">const</span> <span style="color:rgb(136, 174, 206); font-weight:400;">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;My Window Class&quot;</span>;
+<code>    WNDCLASS window_class = { <span style="color:rgb(240, 141, 73); font-weight:400;">0</span> };
+    <span style="color:rgb(136, 174, 206); font-weight:400;">const</span> <span style="color:rgb(136, 174, 206); font-weight:400;">wchar_t</span> window_class_name[] = L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;My Window Class&quot;</span>;
     window_class.lpszClassName = (PCSTR)window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;</code>
-Making window_class and _name static prevents them from being allocated on the heap, and instead the memory for them is reserved when the program is launched. You should do this for any variables that stay in-scope for the entire run-time of your program or else you may run out of heap space.
 In C by default a character is one byte, but Win32 uses wchar_t "wide characters" which are 2 bytes. The L before the "My Window Class" string indicates to the compiler to consider these "wide characters".
 hInstance is a handle to the current program instance, but for some reason substituting NULL here and in CreateWindow works fine. We're supposed to give hInstance over to Windows so that it knows which program or dll registered the class and created the window but for now it doesn't seem to have any effect. I expect to discover some functions in the future which require a matching hInstance between multiple objects, like a window class, window itself and some other stuff.
 
@@ -173,7 +188,7 @@ RegisterClass is one of several functions which has been superseded by an extend
 <code>    HWND window_handle = CreateWindow((PCSTR)window_class_name, <span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Learn to Program Windows&quot;</span>, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>);</code>
 CreateWindow, along with several other Win32 functions, aliases to either CreateWindowA or CreateWindowW, depending on whether your compiler is set to Ansi or Unicode. Most of the time this doesn't matter but if you want to specify you can use those directly instead.
 The third argument is the "window style". This defines things like whether your window has a border, title bar, scroll bars and other elements. They can be bitwise ORed together. WS_OVERLAPPEDWINDOW includes the normal window styles and is usually the one you want. WS_POPUP can be used instead to create a borderless window. Here's some example code for making a borderless fullscreen window:
-<code>    <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> HWND window_handle;
+<code>    HWND window_handle;
     {
     RECT desktop_rect;
     HWND desktop_handle = <span style="color:rgb(240, 141, 73); font-weight:400;">GetDesktopWindow</span>();
@@ -183,8 +198,8 @@ The third argument is the "window style". This defines things like whether your 
     }</code>
 I've retrieved the size of the screen with GetWindowRect. If you just substitute this code your window will be invisible until you "paint" something to it, which I've added to the event handling in WindowProcessMessage:
 <code>        <span style="color:rgb(136, 174, 206); font-weight:400;">case</span> WM_PAINT: {
-            <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> HDC hdc;
-            <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> PAINTSTRUCT ps;
+            HDC hdc;
+            PAINTSTRUCT ps;
             hdc = <span style="color:rgb(240, 141, 73); font-weight:400;">BeginPaint</span>(window_handle, &amp;ps);
             <span style="color:rgb(240, 141, 73); font-weight:400;">FillRect</span>(hdc, &amp;ps.rcPaint, (HBRUSH) (COLOR_WINDOW+<span style="color:rgb(240, 141, 73); font-weight:400;">1</span>));
             <span style="color:rgb(240, 141, 73); font-weight:400;">EndPaint</span>(window_handle, &amp;ps);
@@ -202,7 +217,7 @@ If CreateWindow fails it returns NULL.
 nCmdShow includes information from Windows on how to show your window. For example, if your program is run from a shortcut you can set Normal, Minimized or Maximized here. You can also pass one of these values but they don't have a great deal of use for game development.
 
 <code>    <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(!quit) {
-        <span style="color:rgb(136, 174, 206); font-weight:400;">static</span> MSG message;
+        MSG message;
         <span style="color:rgb(136, 174, 206); font-weight:400;">while</span>(PeekMessage(&amp;message, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">0</span>, PM_REMOVE)) {
             TranslateMessage(&amp;message);
             DispatchMessage(&amp;message);

@@ -1,1 +1,1 @@
-gcc -Wall -Werror main.c -lwinmm
+gcc main.c -lwinmm

@@ -32,7 +32,9 @@ Note: Click any of the <a>hyperlinked words</a> to visit the MSDN documentation 
 Note: I've dimmed all of the code not specific to the subject of the tutorial.
 
 <a href="main.c" download>main.c</a>
-<code><span class="fadecode">#include &ltwindows.h&gt
+<code><span class="fadecode">#define UNICODE
+#define _UNICODE
+#include &ltwindows.h&gt
 #include &ltstdbool.h&gt
 #include &ltstdint.h&gt
 #include &ltstdio.h&gt
@@ -71,7 +73,7 @@ struct {
 	static WNDCLASS window_class = { 0 };
 	window_class.lpfnWndProc = WindowProcessMessage;
 	window_class.hInstance = hInstance;
-	window_class.lpszClassName = (PCSTR)window_class_name;
+	window_class.lpszClassName = window_class_name;
 	RegisterClass(&window_class);
 
 	bitmap_info.bmiHeader.biSize = sizeof(bitmap_info.bmiHeader);
@@ -80,7 +82,7 @@ struct {
 	bitmap_info.bmiHeader.biCompression = BI_RGB;
 	bitmap_device_context = CreateCompatibleDC(0);
 
-	window_handle = CreateWindow((PCSTR)window_class_name, "Learn to Program Windows", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+	window_handle = CreateWindow(window_class_name, L"Learn to Program Windows", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 	if(window_handle == NULL) {
 		PRINT_ERROR("CreateWindow() failed. Returned NULL.\n");
 		return -1;
@@ -117,8 +119,7 @@ struct {
 	<span style="color:rgb(136, 174, 206); font-weight:400;">static</span> <span style="color:rgb(136, 174, 206); font-weight:400;">bool</span> has_focus = <span style="color:rgb(240, 141, 73); font-weight:400;">true</span>;
 
 	<span style="color:rgb(240, 141, 73); font-weight:400;"><span style="color:rgb(136, 174, 206); font-weight:400;">switch</span></span>(message) {
-<span class="fadecode">	switch(message) {
-		case WM_QUIT:
+<span class="fadecode">		case WM_QUIT:
 		case WM_DESTROY: {
 			quit = true;
 		} break;

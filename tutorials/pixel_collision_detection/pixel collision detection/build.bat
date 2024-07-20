@@ -1,0 +1,1 @@
+gcc -ggdb -Wall -Werror -o a.exe main.c -Ilibraries/ -lntdll -lgdi32 -luxtheme

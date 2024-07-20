@@ -14,20 +14,6 @@
 
 <section>
 
-<!--<article class="game">
-  <a href="https://store.steampowered.com/app/1014400/Notemon/" target="_blank"><img class="thumbnail" src="images/notemon.png" alt="Notemon"/></a>
-  <h3>Notemon</h3>
-  Release: When it's ready<br/>
-  Turn-based monster-taming RPG<br/>
-  <a href="http://croakingkero.com/phplist/?p=subscribe&id=1" target="_blank">Get an e-mail on release day</a><br/><br/>
-  Notemon is a monster-taming turn-based RPG with a New Zealand-inspired culture.<br/><br/>
-  Watch my <a href="https://www.youtube.com/watch?v=HgS5gIkqb9M&list=PLPGNrHeloF_eiCo7jchppuBVf7aXUQBR7&index=1" target="_blank">Patch Notes videos</a> to see the progress I'm making on Notemon<br/>
-  Wishlist Notemon on <a href="https://store.steampowered.com/app/1014400/Notemon/">Steam</a><br/>
-  Also on <a href="https://CroakingKero.gamejolt.io/Notemon/">GameJolt</a> and <a href="https://croaking-kero.itch.io/notemon">Itchio</a><br/>
-  Get gifs and other tweets about Notemon on <a href="https://twitter.com/NotemonGame">Twitter</a><br/><br/>
-  <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png">Other platforms possible.<!--<img src="images/platforms/mac.png">--></footer>
-</article>
-
 <article class="game">
   <a href="https://croakingkero.gamejolt.io/maze95" target="_blank"><img class="thumbnail" src="images/maze95.png" alt="Maze95"/></a>
   <h3>Maze95</h3>
