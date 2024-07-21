@@ -1,0 +1,64 @@
+header, section, footer, aside, nav, main, article, figure {
+  display: block;
+}
+
+a {
+  color: rgb(64,255,64);
+  text-decoration: none;
+}
+
+h1, h4 {
+  display: inline;
+  line-height: 1;
+}
+h1 {  font-size: 60px; }
+h2 {  font-size: 52px; }
+h3 {
+  font-size: 40px;
+  padding: 0;
+  margin: 0px;
+}
+h4 { font-size: 32px; }
+h5 { font-size: 24px; }
+
+body {
+  background: #403a4d;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+}
+
+article {
+  text-align: left;
+}
+.game {
+  background: rgba(0,0,0,0.25);
+  display: inline-block;
+  overflow: hidden;
+  height: 384px;
+  text-align: left;
+  text-padding: 0;
+  padding: 0;
+  margin: 5px;
+  width: 90%;
+}
+
+img {
+  display: inline-block;
+}
+.thumbnail {
+  float:left;
+  padding-right: 10px;
+  width: 384px;
+  height: 384px;
+}
+
+@media only screen and (max-width: 970px) {
+  .game {
+    width: 384px;
+    height: 820px;
+  }
+}
