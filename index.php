@@ -15,6 +15,19 @@
 <section>
 
 <article class="game">
+  <a href="https://store.steampowered.com/app/2572310/Nicks_Saturday_Morning_Games/" target="_blank"><iframe class="thumbnail" src="https://www.youtube.com/embed/ffUbTf0zoPI" allowfullscreen allow="fullscreen" frameborder=0></iframe></a>
+  <h3>Nick's Saturday Morning Games</h3>
+  Collection of small games on Steam<br/>
+  November 1st 2025<br/><br/>
+  This is my platform for releasing small games in a collection on Steam. They are programmed from scratch using my Croaking Kero Game Framework (see below).<br/><br/>
+  Current games included:<br/><br/>
+  Heli: A 2d helicopter flying game where you rescue orphaned "Stompers" from rock-throwing, gun-toting worms. Stompers will stomp grapes to make wine at your base, which you can sell to buy upgrades.
+  <br/><br/>
+  Source code will be released under the GPL soon, and available under Apache 2.0 for a small fee.<br/><br/>
+  <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><img src="images/platforms/mac.png"></footer>
+</article>
+
+<article class="game">
   <a href="https://codeberg.org/UltimaN3rd/Croaking_Kero_Game_Framework" target="_blank"><img class="thumbnail" src="images/Flappy_Choppa.gif" alt="Croaking Kero Game Framework" loading="lazy"/></a>
   <h3>Croaking Kero Game Framework</h3>
   Free & open source<br/>

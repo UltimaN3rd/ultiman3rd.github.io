@@ -57,6 +57,17 @@ img {
   object-fit: contain;
 }
 
+iframe {
+
+}
+.thumnail {
+  float:left;
+  padding-right: 10px;
+  width: 384px;
+  height: 384px;
+  object-fit: contain;
+}
+
 @media only screen and (max-width: 970px) {
   .game {
     width: 384px;
