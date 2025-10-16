@@ -15,6 +15,17 @@
 <section>
 
 <article class="game">
+  <a href="https://codeberg.org/UltimaN3rd/Croaking_Kero_Game_Framework" target="_blank"><img class="thumbnail" src="images/Flappy_Choppa.gif" alt="Croaking Kero Game Framework" loading="lazy"/></a>
+  <h3>Croaking Kero Game Framework</h3>
+  Free & open source<br/>
+  October 1st 2025<br/>
+  A game backend framework, programmed from scratch for Windows, Linux and MacOS<br/><br/>
+  When programming games in the past, I've listened to the advice, "Don't reinvent the wheel," and, "You probably can't do it better than X, so just use X." This advice is intended to save people time and get straight to productive game programming, but I found it difficult to become a good enough programmer while skipping so many foundational parts of the code. I ran into bugs and issues which required understanding the underlying code, which was very difficult when I'd never written code as low-level as the libraries/engines I depended on. I also felt demotivated working on games that I ultimately may be unable to maintain - like the multitude of fantastic Flash-based games from back in the day.<br/><br/>
+  Source code on <a href="https://codeberg.org/UltimaN3rd/Croaking_Kero_Game_Framework">Codeberg</a> and <a href="https://github.com/UltimaN3rd/Croaking_Kero_Game_Framework/tree/main">Github</a><br/><br/>
+  <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><img src="images/platforms/mac.png"></footer>
+</article>
+
+<article class="game">
   <a href="https://croakingkero.gamejolt.io/maze95" target="_blank"><img class="thumbnail" src="images/maze95.png" alt="Maze95"/></a>
   <h3>Maze95</h3>
   Free & open source<br/>

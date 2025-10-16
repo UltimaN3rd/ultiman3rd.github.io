@@ -1,0 +1,10 @@
+{
+    "chat.disableAIFeatures": true,
+    "chat.sendElementsToChat.enabled": false,
+    "chat.agent.enabled": false,
+    "chat.checkpoints.enabled": false,
+    "chat.detectParticipant.enabled": false,
+    "chat.emptyChatState.enabled": false,
+    "chat.extensionTools.enabled": false,
+    "chat.math.enabled": false
+}

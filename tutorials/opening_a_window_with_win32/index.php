@@ -44,6 +44,7 @@ LRESULT <span style="color:rgb(240, 141, 73); font-weight:400;background:rgba(0,
     window_class.lpszClassName = window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
+	window_class.hCursor = LoadCursor (NULL, IDC_ARROW);
     
     RegisterClass(&amp;window_class);
     
@@ -107,12 +108,13 @@ Win32 defines its own main() function entry-point and handles some behind-the-sc
     window_class.lpszClassName = window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
-    
+	window_class.hCursor = LoadCursor (NULL, IDC_ARROW);
+
     RegisterClass(&amp;window_class);
     
     HWND window_handle = CreateWindow(window_class_name, L<span style="color:rgb(181, 189, 104); font-weight:400;">&quot;Learn to Program Windows&quot;</span>, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>, hInstance, <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>);
     <span style="color:rgb(136, 174, 206); font-weight:400;">if</span>(window_handle == <span style="color:rgb(240, 141, 73); font-weight:400;">NULL</span>) { <span style="color:rgb(136, 174, 206); font-weight:400;">return</span> <span style="color:rgb(240, 141, 73); font-weight:400;">-1</span>; }</code>
-We create a window class to hold information about the window. The name is used to reference our class later. “lpfnWndProc” is a pointer to a function Windows will call in order to handle events, or as Windows calls them, messages. We “Register” the class with Windows, then create a window based on it.
+We create a window class to hold information about the window. The name is used to reference our class later. “lpfnWndProc” is a pointer to a function Windows will call in order to handle events, or as Windows calls them, messages. The hCursor line sets our window's cursor to the normal windows arrow - without this, the cursor will stay as whatever it was when it entered the window. We “Register” the class with Windows, then create a window based on it.
 The name identifies our window class. We give our window a title, and tell Windows what kind of window to create with a “window style”. WS_OVERLAPPEDWINDOW combines the usual border, title bar and so on. The next 4 arguments are the x and y coordinates of the top-left of our window, then the width and height. With an “overlapped” window you can let Windows decide these values with CW_USEDEFAULT. We check the function was successful then continue.
 
 <code>    ShowWindow(window_handle, nCmdShow);</code>

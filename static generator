@@ -1,0 +1,4 @@
+In one terminal from this folder:
+php -S localhost:8000
+In another terminal:
+wget -k -E -r -l 10 -p -N -F -nH localhost:8000

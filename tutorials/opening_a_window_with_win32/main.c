@@ -13,6 +13,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
     window_class.lpszClassName = window_class_name;
     window_class.lpfnWndProc = WindowProcessMessage;
     window_class.hInstance = hInstance;
+	window_class.hCursor = LoadCursor (NULL, IDC_ARROW);
     
     RegisterClass(&window_class);
     
