@@ -2,3 +2,6 @@ In one terminal from this folder:
 php -S localhost:8000
 In another terminal:
 wget -k -E -r -l 10 -p -N -F -nH localhost:8000
+
+!!!!!!!!!!! IMPORTANT NOTE !!!!!!!!!!!
+If anything is added to the site which is not linked to from somewhere else on the site, add it as a blank href in hidden-content.html

@@ -16,7 +16,7 @@
 
 <article class="game">
   <a href="https://store.steampowered.com/app/2572310/Nicks_Saturday_Morning_Games/" target="_blank"><iframe class="thumbnail" src="https://www.youtube.com/embed/ffUbTf0zoPI" allowfullscreen allow="fullscreen" frameborder=0></iframe></a>
-  <h3>Nick's Saturday Morning Games</h3>
+  <h3><a href="https://store.steampowered.com/app/2572310/Nicks_Saturday_Morning_Games/" target="_blank">Nick's Saturday Morning Games</a></h3>
   Collection of small games on Steam<br/>
   November 1st 2025<br/><br/>
   This is my platform for releasing small games in a collection on Steam. They are programmed from scratch using my Croaking Kero Game Framework (see below).<br/><br/>
@@ -24,12 +24,13 @@
   Heli: A 2d helicopter flying game where you rescue orphaned "Stompers" from rock-throwing, gun-toting worms. Stompers will stomp grapes to make wine at your base, which you can sell to buy upgrades.
   <br/><br/>
   Source code will be released under the GPL soon, and available under Apache 2.0 for a small fee.<br/><br/>
+  Launching on Steam soon: <a href="https://store.steampowered.com/app/2572310/Nicks_Saturday_Morning_Games/" target="_blank">https://store.steampowered.com/app/2572310/Nicks_Saturday_Morning_Games/</a><br/><br/>
   <footer class="platforms"><img src="images/platforms/linux.png"><img src="images/platforms/windows.png"><img src="images/platforms/mac.png"></footer>
 </article>
 
 <article class="game">
   <a href="https://codeberg.org/UltimaN3rd/Croaking_Kero_Game_Framework" target="_blank"><img class="thumbnail" src="images/Flappy_Choppa.gif" alt="Croaking Kero Game Framework" loading="lazy"/></a>
-  <h3>Croaking Kero Game Framework</h3>
+  <h3><a href="https://codeberg.org/UltimaN3rd/Croaking_Kero_Game_Framework" target="_blank">Croaking Kero Game Framework</a></h3>
   Free & open source<br/>
   October 1st 2025<br/>
   A game backend framework, programmed from scratch for Windows, Linux and MacOS<br/><br/>
@@ -40,7 +41,7 @@
 
 <article class="game">
   <a href="https://croakingkero.gamejolt.io/maze95" target="_blank"><img class="thumbnail" src="images/maze95.png" alt="Maze95"/></a>
-  <h3>Maze95</h3>
+  <h3><a href="https://croakingkero.gamejolt.io/maze95" target="_blank">Maze95</a></h3>
   Free & open source<br/>
   April 24th 2019<br/>
   3d mazes<br/><br/>
@@ -52,7 +53,7 @@
 
 <article class="game">
   <a href="https://croakingkero.gamejolt.io/bobrossmuseum" target="_blank"><img class="thumbnail" src="images/bobross.png" alt="Bob Ross - Sliding Paintings Museum"/></a>
-  <h3>Bob Ross - Sliding Paintings Museum</h3>
+  <h3><a href="https://croakingkero.gamejolt.io/bobrossmuseum" target="_blank">Bob Ross - Sliding Paintings Museum</a></h3>
   Free & open source<br/>
   October 29th 2018<br/>
   Sliding puzzles<br/><br/>
@@ -64,7 +65,7 @@
 
 <article class="game">
   <a href="https://gamejolt.com/games/professor-blobbins-and-the-music-of-love/225130" target="_blank"><img class="thumbnail" src="images/music_of_love.png" alt="Professor Blobbins and the Music of Love"/></a>
-  <h3>Professor Blobbins and the Music of Love</h3>
+  <h3><a href="https://gamejolt.com/games/professor-blobbins-and-the-music-of-love/225130" target="_blank">Professor Blobbins and the Music of Love</a></h3>
   Free and open source (PICO-8)<br/>
   January 31st 2017<br/>
   Platformer<br/><br/>
@@ -75,7 +76,7 @@
 
 <article class="game">
   <a href="https://gamejolt.com/games/steal-godot/160943" target="_blank"><img class="thumbnail" src="images/steal_godot.png" alt="Steal Godot"/></a>
-  <h3>Steal Godot</h3>
+  <h3><a href="https://gamejolt.com/games/steal-godot/160943" target="_blank">Steal Godot</a></h3>
   Free & open source (Godot)<br/>
   June 28th 2016<br/>
   Sokoban puzzle game<br/><br/>
@@ -87,7 +88,7 @@
 
 <article class="game">
   <a href="https://gamejolt.com/games/it-all-revolves-around-you/139701" target="_blank"><img class="thumbnail" src="images/iaray.png"/></a>
-  <h3>It All Revolves Around You</h3>
+  <h3><a href="https://gamejolt.com/games/it-all-revolves-around-you/139701" target="_blank">It All Revolves Around You</a></h3>
   Free<br/>
   September 21st 2015<br/>
   Gravity game<br/><br/>
@@ -103,5 +104,7 @@
 
 
 <?php include "footer_common.html" ?>
+
+<?php include "hidden-content.html" ?>
 
 </html>
