@@ -1,5 +1,7 @@
+document.currentScript.insertAdjacentHTML('beforebegin',`
 <footer style="text-align: center; width: 100%; display: block;">
 <a href="https://bsky.app/profile/ultiman3rd.bsky.social" target="_blank"><img src="/images/bluesky.png"/></a>
 <a href="mailto:contact@croakingkero.com"><img src="/images/mail.png"/></a>
 <a href="https://www.youtube.com/channel/UC-znzWI90uJzzKCfQqbHlMg" target="_blank"><img src="/images/youtube.png"/></a>
 </footer>
+`);
