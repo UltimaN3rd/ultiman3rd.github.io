@@ -2,17 +2,15 @@
 <html lang="en-US">
 
 <head>
-  <?php set_include_path($_SERVER['DOCUMENT_ROOT']); ?>
-  <!--[if lt IE 9]>  <script src="html5shiv.min.js"></script>  <![endif]-->
   <script src="/head_common.js"></script>
   <link rel="stylesheet" href="/blog/blog.css" />
   <link rel="stylesheet" href="/tutorials/tutorial.css" />
-  <?php include "/blog/bloghead.html" ?>
+  <script src="/blog/bloghead.js"></script>
 </head>
 
-<script src="/header_common.js"></script>
-
 <body>
+
+<script src="/header_common.js"></script>
 
 <article>
 
@@ -35,7 +33,7 @@ First you'll need to install the SDL2 development files. On Ubuntu it's as simpl
 
 <code>sudo apt install libsdl2-dev</code>
 
-On Windows/Mac follow the official guidelines on SDL's website: https://www.libsdl.org/download-2.0.php
+On Windows/Mac follow the official guidelines on SDL's website: <a href="https://www.libsdl.org/download-2.0.php" target="_blank">https://www.libsdl.org/download-2.0.php</a>
 Make sure to download the "Development Libraries".
 
 The full code for this tutorial can be downloaded here: <a href="https://gitlab.com/UltimaN3rd/croaking-kero-programming-tutorials/blob/master/opening_a_window_with_sdl/opening_a_window_with_sdl.c" target="_blank">opening_a_window_with_sdl.c</a>
@@ -295,10 +293,10 @@ Thanks to Froggie717 for criticisms and correcting errors in this tutorial.
 
 </article>
 
-</body>
-
-<?php include "/blog/blogbottom.html" ?>
+<script src="/blog/blogbottom.js"></script>
 
 <script src="/footer_common.js"></script>
+
+</body>
 
 </html>
